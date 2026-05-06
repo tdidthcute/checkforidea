@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PawLink — Kết nối trái tim, cứu sống sinh linh</title>
+  <title>PAWCONNECT — Kết nối trái tim, cứu sống sinh linh</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,20 +15,22 @@
   <nav id="navbar">
     <div class="nav-logo">
       <span class="paw-icon">🐾</span>
-      <span class="logo-text">PawLink</span>
+      <span class="logo-text">PAWCONNECT</span>
     </div>
     <div class="nav-links">
-  <a href="#hero" class="nav-link active" data-section="hero">Trang chủ</a>
-  <a href="#adopt" class="nav-link" data-section="adopt">Nhận nuôi</a>
-  <a href="#rescue" class="nav-link" data-section="rescue">Báo cứu hộ</a>
-  <a href="#foster" class="nav-link" data-section="foster">Nuôi tạm</a>
-  <a href="#volunteer" class="nav-link" data-section="volunteer">Tình nguyện</a>
-  <a href="#dashboard" class="nav-link" data-section="dashboard">Dashboard</a>
-  <a href="#donate" class="nav-link" data-section="donate">Donate</a>
-  <a href="#merch" class="nav-link" data-section="merch">Merch</a>
-  <a href="login.html" class="nav-link" style="background: var(--terracotta); color: white;">🔐 Đăng nhập</a>
-</div>
-    <button class="nav-cta" onclick="scrollToSection('rescue')">Báo cứu hộ ngay</button>
+      <a href="#hero" class="nav-link active" data-section="hero">Trang chủ</a>
+      <a href="#adopt" class="nav-link" data-section="adopt">Nhận nuôi</a>
+      <a href="#rescue" class="nav-link" data-section="rescue">Báo cứu hộ</a>
+      <a href="#foster" class="nav-link" data-section="foster">Nuôi tạm</a>
+      <a href="#volunteer" class="nav-link" data-section="volunteer">Tình nguyện</a>
+      <a href="#qr-profile" class="nav-link" data-section="qr-profile">QR Pet</a>
+      <a href="#pet-therapy" class="nav-link" data-section="pet-therapy">Pet Therapy</a>
+      <a href="#dashboard" class="nav-link" data-section="dashboard">Dashboard</a>
+      <a href="#donate" class="nav-link" data-section="donate">Donate</a>
+      <a href="#merch" class="nav-link" data-section="merch">Merch</a>
+      <a href="login.html" class="nav-link" style="background: var(--terracotta); color: white;">🔐 Đăng nhập</a>
+    </div>
+    <button class="nav-cta" onclick="scrollToSection('rescue')">🚨 Báo cứu hộ ngay</button>
     <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
   </nav>
 
@@ -40,6 +42,8 @@
     <a href="#rescue" class="mobile-link" onclick="closeMobileMenu()">Báo cứu hộ</a>
     <a href="#foster" class="mobile-link" onclick="closeMobileMenu()">Nuôi tạm</a>
     <a href="#volunteer" class="mobile-link" onclick="closeMobileMenu()">Tình nguyện</a>
+    <a href="#qr-profile" class="mobile-link" onclick="closeMobileMenu()">QR Pet</a>
+    <a href="#pet-therapy" class="mobile-link" onclick="closeMobileMenu()">Pet Therapy</a>
     <a href="#dashboard" class="mobile-link" onclick="closeMobileMenu()">Dashboard</a>
     <a href="#donate" class="mobile-link" onclick="closeMobileMenu()">Donate</a>
     <a href="#merch" class="mobile-link" onclick="closeMobileMenu()">Merch</a>
@@ -51,13 +55,13 @@
     <div class="hero-bg-grid"></div>
     <div class="floating-paws" id="floatingPaws"></div>
     <div class="hero-content">
-      <div class="hero-badge">🐾 Nền tảng phi tập trung đầu tiên tại Việt Nam</div>
+      <div class="hero-badge">🐾 Nền tảng cứu hộ phi tập trung đầu tiên</div>
       <h1 class="hero-title">
-        Mỗi sinh linh<br/>
-        <em>xứng đáng</em><br/>
-        được yêu thương.
+        Kết nối<br/>
+        <em>trái tim</em><br/>
+        cứu sống sinh linh.
       </h1>
-      <p class="hero-sub">PawLink kết nối sinh viên — người cứu hộ — phòng khám — người nhận nuôi thành một hệ sinh thái hoàn chỉnh. Không cần shelter lớn. Chỉ cần một cộng đồng đủ tâm.</p>
+      <p class="hero-sub">PAWCONNECT kết nối sinh viên — người cứu hộ — phòng khám — người nhận nuôi thành một hệ sinh thái hoàn chỉnh.</p>
       <div class="hero-actions">
         <button class="btn-primary" onclick="scrollToSection('rescue')">🚨 Báo cứu hộ ngay</button>
         <button class="btn-secondary" onclick="scrollToSection('adopt')">🐱 Tìm thú cưng</button>
@@ -178,6 +182,51 @@
     </div>
   </section>
 
+  <!-- ===== QR PET PROFILE (THÊM MỚI) ===== -->
+  <section id="qr-profile" class="section qr-section">
+    <div class="section-header">
+      <div class="section-badge">QR Pet Profile</div>
+      <h2 class="section-title">Mỗi bé <em>một câu chuyện</em></h2>
+      <p class="section-sub">Quét mã QR để xem hành trình cứu hộ, tình trạng sức khỏe và câu chuyện của từng bé</p>
+    </div>
+    <div class="qr-grid" id="qrGrid">
+      <!-- Injected by JS -->
+    </div>
+  </section>
+
+  <!-- ===== PET THERAPY (THÊM MỚI) ===== -->
+  <section id="pet-therapy" class="section therapy-section">
+    <div class="section-header">
+      <div class="section-badge">Pet Therapy</div>
+      <h2 class="section-title">Thư giãn cùng <em>thú cưng</em> mùa thi</h2>
+      <p class="section-sub">Giảm stress, tăng năng lượng tích cực với những buổi gặp gỡ thú cưng đáng yêu</p>
+    </div>
+    <div class="therapy-grid">
+      <div class="therapy-card">
+        <div class="therapy-icon">🐱☕</div>
+        <h3>Coffee & Cats</h3>
+        <p>Thư giãn cùng mèo, uống cà phê, chụp ảnh check-in</p>
+        <div class="therapy-price">50,000 VNĐ / buổi</div>
+        <button class="btn-primary" onclick="bookEvent('coffee-cats')">Đặt vé ngay</button>
+      </div>
+      <div class="therapy-card featured">
+        <div class="therapy-badge">🔥 Hot nhất</div>
+        <div class="therapy-icon">🐶🎾</div>
+        <h3>Puppy Therapy</h3>
+        <p>Chơi đùa với chó con, giảm stress cực kỳ hiệu quả</p>
+        <div class="therapy-price">80,000 VNĐ / buổi</div>
+        <button class="btn-primary" onclick="bookEvent('puppy-therapy')">Đặt vé ngay</button>
+      </div>
+      <div class="therapy-card">
+        <div class="therapy-icon">🧘🐈</div>
+        <h3>Yoga with Cats</h3>
+        <p>Tập yoga cùng mèo, trải nghiệm độc đáo chưa từng có</p>
+        <div class="therapy-price">120,000 VNĐ / buổi</div>
+        <button class="btn-primary" onclick="bookEvent('yoga-cats')">Đặt vé ngay</button>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== RESCUE REPORT ===== -->
   <section id="rescue" class="section rescue-section">
     <div class="rescue-inner">
@@ -191,12 +240,13 @@
           <div class="rescue-feat">✅ Theo dõi trạng thái real-time</div>
           <div class="rescue-feat">✅ Kết nối volunteer gần nhất</div>
         </div>
+        <button class="btn-outline" onclick="window.location.href='rescue-map.html'" style="margin-top:1rem">🗺️ Xem bản đồ cứu hộ →</button>
       </div>
       <div class="rescue-right">
         <form class="rescue-form" id="rescueForm">
           <div class="form-group">
             <label>Vị trí phát hiện *</label>
-            <input type="text" placeholder="VD: Cổng trường ĐH Bách Khoa, Q.10" required />
+            <input type="text" id="rescueLocation" placeholder="VD: Cổng trường ĐH Bách Khoa, Q.10" required />
           </div>
           <div class="form-group">
             <label>Loại động vật *</label>
@@ -208,7 +258,7 @@
           </div>
           <div class="form-group">
             <label>Tình trạng *</label>
-            <select required>
+            <select id="rescueCondition" required>
               <option value="">Chọn tình trạng...</option>
               <option>🔴 Bị thương nặng, cần cứu ngay</option>
               <option>🟡 Có vẻ ốm, cần theo dõi</option>
@@ -218,7 +268,7 @@
           </div>
           <div class="form-group">
             <label>Mô tả thêm</label>
-            <textarea placeholder="Màu lông, kích thước, hành vi... mọi thông tin đều hữu ích!" rows="3"></textarea>
+            <textarea id="rescueDesc" placeholder="Màu lông, kích thước, hành vi... mọi thông tin đều hữu ích!" rows="3"></textarea>
           </div>
           <div class="form-group">
             <label>Ảnh chụp (nếu có)</label>
@@ -229,7 +279,7 @@
           </div>
           <div class="form-group">
             <label>Số điện thoại liên hệ *</label>
-            <input type="tel" placeholder="0xxx xxx xxx" required />
+            <input type="tel" id="rescuePhone" placeholder="0xxx xxx xxx" required />
           </div>
           <button type="submit" class="btn-primary w-full">🚨 Gửi báo cáo cứu hộ</button>
         </form>
@@ -242,13 +292,13 @@
     <div class="section-header">
       <div class="section-badge">Nuôi tạm</div>
       <h2 class="section-title">Cho mượn một <em>mái ấm</em> nhỏ</h2>
-      <p class="section-sub">Bạn không cần nuôi mãi mãi — chỉ cần vài tuần đủ để thú cưng ổn định và tìm được chủ mới. PawLink hỗ trợ chi phí thú y và thức ăn.</p>
+      <p class="section-sub">Bạn không cần nuôi mãi mãi — chỉ cần vài tuần đủ để thú cưng ổn định và tìm được chủ mới. PAWCONNECT hỗ trợ chi phí thú y và thức ăn.</p>
     </div>
     <div class="foster-grid">
       <div class="foster-card">
         <div class="foster-icon">💰</div>
         <h3>Hỗ trợ chi phí</h3>
-        <p>PawLink hoàn tiền thức ăn, thú y trong thời gian nuôi tạm qua quỹ cộng đồng.</p>
+        <p>PAWCONNECT hoàn tiền thức ăn, thú y trong thời gian nuôi tạm qua quỹ cộng đồng.</p>
       </div>
       <div class="foster-card">
         <div class="foster-icon">📱</div>
@@ -258,7 +308,7 @@
       <div class="foster-card">
         <div class="foster-icon">🏆</div>
         <h3>Điểm tình nguyện</h3>
-        <p>Tích lũy điểm Foster Hero, đổi quà và được ưu tiên trong cộng đồng PawLink.</p>
+        <p>Tích lũy điểm Foster Hero, đổi quà và được ưu tiên trong cộng đồng.</p>
       </div>
       <div class="foster-card">
         <div class="foster-icon">🤝</div>
@@ -270,10 +320,10 @@
       <form class="foster-signup" id="fosterForm">
         <h3>Đăng ký làm người nuôi tạm</h3>
         <div class="foster-form-row">
-          <input type="text" placeholder="Họ tên" required />
-          <input type="tel" placeholder="Số điện thoại" required />
-          <input type="text" placeholder="Địa chỉ / Quận" required />
-          <select>
+          <input type="text" id="fosterName" placeholder="Họ tên" required />
+          <input type="tel" id="fosterPhone" placeholder="Số điện thoại" required />
+          <input type="text" id="fosterAddress" placeholder="Địa chỉ / Quận" required />
+          <select id="fosterType">
             <option>Có thể nuôi: Mèo</option>
             <option>Có thể nuôi: Chó</option>
             <option>Có thể nuôi: Cả hai</option>
@@ -281,6 +331,9 @@
         </div>
         <button type="submit" class="btn-primary">Đăng ký nuôi tạm →</button>
       </form>
+    </div>
+    <div style="text-align: center; margin-top: 2rem;">
+      <button class="btn-outline" onclick="window.location.href='foster-matching.html'">🐾 Xem danh sách pet cần ghép đôi →</button>
     </div>
   </section>
 
@@ -383,8 +436,9 @@
         </div>
         <div class="donate-total">
           <span class="donate-total-label">Tổng quỹ đã quyên góp:</span>
-          <span class="donate-total-num">47,230,000 VNĐ</span>
+          <span class="donate-total-num" id="totalFund">47,230,000 VNĐ</span>
         </div>
+        <button class="btn-outline" onclick="window.location.href='donation-history.html'" style="margin-top:1rem">📊 Xem lịch sử donate minh bạch →</button>
       </div>
       <div class="donate-right">
         <div class="donate-card-selector">
@@ -422,19 +476,26 @@
     </div>
   </section>
 
-  <!-- ===== MERCH ===== -->
+  <!-- ===== MERCH CAMPUS EDITION ===== -->
   <section id="merch" class="section merch-section">
     <div class="section-header">
-      <div class="section-badge">Merch Shop</div>
+      <div class="section-badge">Merch Campus Edition</div>
       <h2 class="section-title">Mua để <em>làm điều tốt</em></h2>
-      <p class="section-sub">30% doanh thu từ mỗi sản phẩm đi thẳng vào quỹ cứu hộ. Mặc đẹp, làm tốt.</p>
+      <p class="section-sub">30% doanh thu từ mỗi sản phẩm đi thẳng vào quỹ cứu hộ. Bộ sưu tập riêng cho từng trường!</p>
+    </div>
+    <div class="campus-filter">
+      <button class="campus-btn active" data-campus="all">🎓 Tất cả trường</button>
+      <button class="campus-btn" data-campus="bachkhoa">🏫 ĐH Bách Khoa</button>
+      <button class="campus-btn" data-campus="kinhte">📈 ĐH Kinh tế</button>
+      <button class="campus-btn" data-campus="supham">📚 ĐH Sư Phạm</button>
+      <button class="campus-btn" data-campus="khhtn">🔬 ĐH KHTN</button>
     </div>
     <div class="merch-filter">
       <button class="filter-btn active" data-mfilter="all">Tất cả</button>
       <button class="filter-btn" data-mfilter="apparel">👕 Áo quần</button>
       <button class="filter-btn" data-mfilter="accessory">🎒 Phụ kiện</button>
       <button class="filter-btn" data-mfilter="sticker">🎨 Sticker</button>
-      <button class="filter-btn" data-mfilter="homeware">🏠 Đồ nhà</button>
+      <button class="filter-btn" data-mfilter="blindbox">📦 Blindbox</button>
     </div>
     <div class="merch-grid" id="merchGrid">
       <!-- Injected by JS -->
@@ -479,7 +540,7 @@
       </div>
     </div>
     <div class="become-partner">
-      <p>Bạn muốn trở thành đối tác của PawLink?</p>
+      <p>Bạn muốn trở thành đối tác của PAWCONNECT?</p>
       <button class="btn-outline" onclick="openPartnerModal()">Liên hệ hợp tác →</button>
     </div>
   </section>
@@ -488,7 +549,7 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="footer-logo">🐾 PawLink</div>
+        <div class="footer-logo">🐾 PAWCONNECT</div>
         <p>Nền tảng phi tập trung kết nối cứu hộ, nuôi tạm và nhận nuôi động vật bị bỏ rơi.</p>
         <div class="footer-socials">
           <a href="#" class="social-btn">Facebook</a>
@@ -514,14 +575,14 @@
         </div>
         <div class="footer-col">
           <h5>Liên hệ</h5>
-          <a href="#">hello@pawlink.vn</a>
+          <a href="#">hello@pawconnect.vn</a>
           <a href="#">Hotline: 1800-PAW</a>
           <a href="#">TP. Hồ Chí Minh</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 PawLink. Made with ❤️ for every stray soul.</span>
+      <span>© 2025 PAWCONNECT. Made with ❤️ for every stray soul.</span>
       <span>30% doanh thu Merch → Quỹ cứu hộ</span>
     </div>
   </footer>
@@ -533,16 +594,16 @@
       <button class="modal-close" onclick="closeModal('volunteerModal')">✕</button>
       <h3>Đăng ký tình nguyện: <span id="volunteerRole"></span></h3>
       <form id="volunteerForm">
-        <div class="form-group"><label>Họ tên *</label><input type="text" required/></div>
-        <div class="form-group"><label>Email *</label><input type="email" required/></div>
-        <div class="form-group"><label>Số điện thoại *</label><input type="tel" required/></div>
-        <div class="form-group"><label>Trường / Nơi làm việc</label><input type="text"/></div>
+        <div class="form-group"><label>Họ tên *</label><input type="text" id="volName" required/></div>
+        <div class="form-group"><label>Email *</label><input type="email" id="volEmail" required/></div>
+        <div class="form-group"><label>Số điện thoại *</label><input type="tel" id="volPhone" required/></div>
+        <div class="form-group"><label>Trường / Nơi làm việc</label><input type="text" id="VolSchool"/></div>
         <div class="form-group"><label>Thời gian có thể</label>
           <div class="checkbox-group">
-            <label><input type="checkbox" /> Buổi sáng</label>
-            <label><input type="checkbox" /> Buổi chiều</label>
-            <label><input type="checkbox" /> Buổi tối</label>
-            <label><input type="checkbox" /> Cuối tuần</label>
+            <label><input type="checkbox" value="morning" /> Buổi sáng</label>
+            <label><input type="checkbox" value="afternoon" /> Buổi chiều</label>
+            <label><input type="checkbox" value="evening" /> Buổi tối</label>
+            <label><input type="checkbox" value="weekend" /> Cuối tuần</label>
           </div>
         </div>
         <button type="submit" class="btn-primary w-full">Gửi đơn đăng ký</button>
