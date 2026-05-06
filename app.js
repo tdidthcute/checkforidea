@@ -169,6 +169,18 @@ function scrollToSection(id) {
 
 // ===== PETS GRID =====
 function initPetsGrid() {
+  // Merge hardcoded pets with admin-approved pets from localStorage
+  try {
+    const adminPets = JSON.parse(localStorage.getItem("pawlink_pets") || "[]");
+    if (adminPets.length > 0) {
+      // Add admin pets that aren't already in the list
+      adminPets.forEach(p => {
+        if (!PETS_DATA.find(existing => existing.id === p.id)) {
+          PETS_DATA.push(p);
+        }
+      });
+    }
+  } catch (e) {}
   renderPets("all");
 }
 
