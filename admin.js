@@ -1160,6 +1160,54 @@ function getStoredVolunteers() {
 }
 function saveVolunteers(data) { localStorage.setItem("pawlink_volunteers", JSON.stringify(data)); }
 
+// ===== FOSTERS MANAGEMENT (with Edit/Add/Delete) =====
+let editingFosterId = null;
+let editingVolunteerId = null;
+
+// Dữ liệu mặc định cho fosters
+const DEFAULT_FOSTERS = [
+  { id: 1, name: "Nguyễn Minh Anh", area: "Quận 10", type: "Mèo", rating: 5, current: 1, max: 2, phone: "0901234567", email: "minhanh@gmail.com", avatar: "🌸", joined: "15/01/2025", status: "active" },
+  { id: 2, name: "Trần Hoàng Hùng", area: "Thủ Đức", type: "Chó + Mèo", rating: 5, current: 0, max: 1, phone: "0912345678", email: "hoanghung@gmail.com", avatar: "🌟", joined: "22/01/2025", status: "active" },
+  { id: 3, name: "Lê Phương Linh", area: "Quận 3", type: "Mèo", rating: 4, current: 2, max: 2, phone: "0987654321", email: "phuonglinh@gmail.com", avatar: "🎀", joined: "30/01/2025", status: "busy" },
+  { id: 4, name: "Phạm Văn Khoa", area: "Bình Thạnh", type: "Chó", rating: 5, current: 1, max: 3, phone: "0978123456", email: "vankhoa@gmail.com", avatar: "⭐", joined: "05/02/2025", status: "active" },
+  { id: 5, name: "Võ Thị Mai", area: "Quận 7", type: "Mèo", rating: 4, current: 0, max: 2, phone: "0965432187", email: "thimai@gmail.com", avatar: "🌺", joined: "12/02/2025", status: "inactive" },
+];
+
+// Dữ liệu mặc định cho volunteers
+const DEFAULT_VOLUNTEERS = [
+  { id: 1, name: "Trần Minh Khoa", role: "Rescuer", area: "Q.1, Q.3", phone: "0901111222", email: "minhkhoa@gmail.com", status: "active", missions: 12, joined: "10/01/2025", avatar: "🚑", skills: ["Bắt chó mèo", "Sơ cứu"] },
+  { id: 2, name: "Nguyễn Thu Hà", role: "Foster Parent", area: "Thủ Đức", phone: "0912222333", email: "thuha@gmail.com", status: "active", missions: 8, joined: "18/01/2025", avatar: "🏠", skills: ["Chăm sóc thú cưng"] },
+  { id: 3, name: "Lê Văn Dũng", role: "Coordinator", area: "Online", phone: "0923333444", email: "vandung@gmail.com", status: "active", missions: 24, joined: "05/01/2025", avatar: "💻", skills: ["Điều phối", "Quản lý case"] },
+  { id: 4, name: "Phạm Bích Ngọc", role: "Pet Photographer", area: "Q.7, Q.5", phone: "0934444555", email: "bichngoc@gmail.com", status: "inactive", missions: 5, joined: "20/02/2025", avatar: "📸", skills: ["Chụp ảnh pet"] },
+  { id: 5, name: "Vũ Hoàng Nam", role: "Rescuer", area: "Bình Thạnh", phone: "0945555666", email: "hoangnam@gmail.com", status: "active", missions: 17, joined: "14/01/2025", avatar: "🚑", skills: ["Bắt chó mèo", "Vận chuyển"] },
+];
+
+// Get/Set fosters
+function getStoredFosters() {
+  try {
+    const stored = JSON.parse(localStorage.getItem("pawlink_fosters") || "null");
+    if (!stored) {
+      localStorage.setItem("pawlink_fosters", JSON.stringify(DEFAULT_FOSTERS));
+      return DEFAULT_FOSTERS;
+    }
+    return stored;
+  } catch { return DEFAULT_FOSTERS; }
+}
+function saveFosters(data) { localStorage.setItem("pawlink_fosters", JSON.stringify(data)); }
+
+// Get/Set volunteers
+function getStoredVolunteers() {
+  try {
+    const stored = JSON.parse(localStorage.getItem("pawlink_volunteers") || "null");
+    if (!stored) {
+      localStorage.setItem("pawlink_volunteers", JSON.stringify(DEFAULT_VOLUNTEERS));
+      return DEFAULT_VOLUNTEERS;
+    }
+    return stored;
+  } catch { return DEFAULT_VOLUNTEERS; }
+}
+function saveVolunteers(data) { localStorage.setItem("pawlink_volunteers", JSON.stringify(data)); }
+
 // ===== RENDER FOSTERS =====
 function renderFosters() {
   const fosters = getStoredFosters();
@@ -1180,7 +1228,7 @@ function renderFosters() {
                 <td><div class="pet-cell"><div style="font-size:1.5rem">${f.avatar}</div><div><div class="pet-cell-name">${f.name}</div><div class="pet-cell-sub">${f.phone}</div></div></div></td>
                 <td>${f.area}</td><td>${f.type}</td>
                 <td><div style="display:flex;align-items:center;gap:0.5rem"><div style="display:flex;gap:2px">${Array.from({length:f.max}).map((_,i) => `<div style="width:16px;height:16px;border-radius:50%;background:${i<f.current?"var(--terracotta)":"var(--light-gray)"}"></div>`).join("")}</div><span>${f.current}/${f.max}</span></div></td>
-                <td>⭐ ${f.rating}/5</td>
+                <td>⭐ ${f.rating}/5</div></td>
                 <td><span class="sbadge ${f.status === 'active' ? 'sbadge-approved' : f.status === 'busy' ? 'sbadge-watch' : 'sbadge-rejected'}">${f.status === 'active' ? '🟢 Hoạt động' : f.status === 'busy' ? '🟡 Đã có thú' : '🔴 Tạm dừng'}</span></td>
                 <td>${f.joined}</td>
                 <td><div class="action-btns"><button class="btn-edit" onclick="editFoster(${f.id})">✏️ Sửa</button><button class="btn-delete" onclick="deleteFoster(${f.id})">🗑 Xóa</button></div></td>
@@ -1272,13 +1320,14 @@ function renderVolunteers() {
     <div class="table-card"><div class="table-header"><span class="table-title">🙋 Danh sách tình nguyện viên (${volunteers.length})</span><button class="btn-submit" onclick="showAddVolunteerForm()">+ Thêm mới</button></div>
       <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Tên</th><th>Vai trò</th><th>Khu vực</th><th>Nhiệm vụ</th><th>Kỹ năng</th><th>Trạng thái</th><th>Ngày tham gia</th><th>Hành động</th></tr></thead>
       <tbody>${volunteers.map(v => `
-        <tr><td><div class="pet-cell"><div style="font-size:1.5rem">${v.avatar || '🙋'}</div><div><div class="pet-cell-name">${v.name}</div><div class="pet-cell-sub">${v.phone}</div></div></div></td>
+        <td><div class="pet-cell"><div style="font-size:1.5rem">${v.avatar || '🙋'}</div><div><div class="pet-cell-name">${v.name}</div><div class="pet-cell-sub">${v.phone}</div></div></div></td>
         <td><span class="sbadge sbadge-approved" style="background:#E8F0FF;color:var(--blue)">${v.role}</span></td>
-        <td>${v.area}</td><td><span style="font-family:var(--font-mono);font-weight:700">${v.missions}</span> nhiệm vụ</td>
+        <td>${v.area}</td><td><span style="font-family:var(--font-mono);font-weight:700">${v.missions}</span> nhiệm vụ</div></td>
         <td><span style="font-size:0.72rem">${(v.skills || []).join(', ')}</span></td>
         <td><span class="sbadge ${v.status === 'active' ? 'sbadge-approved' : 'sbadge-rejected'}">${v.status === 'active' ? '✅ Đang hoạt động' : '⏸ Tạm ngưng'}</span></td>
         <td>${v.joined}</td>
-        <td><div class="action-btns"><button class="btn-edit" onclick="editVolunteer(${v.id})">✏️ Sửa</button><button class="btn-delete" onclick="deleteVolunteer(${v.id})">🗑 Xóa</button></div></td></tr>
+        <td><div class="action-btns"><button class="btn-edit" onclick="editVolunteer(${v.id})">✏️ Sửa</button><button class="btn-delete" onclick="deleteVolunteer(${v.id})">🗑 Xóa</button></div></td>
+      </tr>
       `).join("")}</tbody></table></div></div>
   `;
 }
@@ -1352,7 +1401,6 @@ function deleteVolunteer(id) {
   saveVolunteers(getStoredVolunteers().filter(v => v.id !== id));
   showToast("🗑 Đã xóa!"); renderVolunteers();
 }
-
 // ===== MODAL HELPERS =====
 function openModal() { 
   const modal = document.getElementById("detailModal");
