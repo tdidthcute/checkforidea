@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pet Profile - PAWCONNECT</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    .pet-profile-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      color: var(--terracotta);
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .funding-progress {
+      background: var(--cream-2);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    .progress-bar {
+      height: 8px;
+      background: var(--terracotta);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      margin-bottom: 0.5rem;
+    }
+    .funding-options {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .funding-options button {
+      flex: 1;
+      min-width: 100px;
+      padding: 0.75rem;
+      border: 2px solid var(--light-gray);
+      border-radius: var(--radius-sm);
+      background: var(--cream);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 600;
+    }
+    .funding-options button:hover {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: var(--white);
+    }
+    .journal-entry {
+      background: var(--cream);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--terracotta);
+    }
+    .journal-date {
+      font-size: 0.75rem;
+      color: var(--mid-gray);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body style="background: var(--cream);">
+
+<div style="max-width: 800px; margin: 0 auto; padding: 1rem;">
+  <a href="index.html" class="back-link">← Quay lại trang chủ</a>
+</div>
+
+<div class="pet-profile-container" id="petProfile">
+  <div style="text-align: center; padding: 3rem;">
+    <div class="loading-spinner">🐾 Đang tải thông tin...</div>
+  </div>
+</div>
+
+<script>
+  // Lấy ID từ URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const petId = parseInt(urlParams.get('id'));
+  
+  // Key localStorage
+  const PETS_KEY = "pawlink_pets";
+  const DONATIONS_KEY = "pawlink_donations";
+  
+  // Dữ liệu mặc định
+  const DEFAULT_PETS = [
+    { id: 1, name: "Mochi", type: "cat", emoji: "🐱", age: "~2 tháng", location: "ĐH Bách Khoa, Q.10", gender: "Cái", status: "urgent", vaccinated: false, neutered: false, fosterDays: 3, desc: "Mochi được phát hiện tại cổng trường trong tình trạng bị thương nhẹ ở chân. Hiện đã được sơ cứu và cần người nuôi tạm gấp.", tags: ["Mèo con", "Cần gấp"], bgColor: "#FFF0E8", costs: "320,000 VNĐ", journal: [
+      { date: "15/03/2025", content: "Được phát hiện tại cổng ĐH Bách Khoa, chân bị thương nhẹ" },
+      { date: "16/03/2025", content: "Đã được đưa đến phòng khám PetCare Plus, băng bó vết thương" },
+      { date: "18/03/2025", content: "Sức khỏe ổn định, đang tìm người nuôi tạm" }
+    ]},
+    { id: 2, name: "Bông", type: "dog", emoji: "🐶", age: "~6 tháng", location: "Hẻm Nguyễn Trãi, Q.5", gender: "Đực", status: "safe", vaccinated: true, neutered: false, fosterDays: 14, desc: "Bông là chú chó lai rất năng động và thân thiện.", tags: ["Chó con", "Đã vaccine"], bgColor: "#E8F0FF", costs: "750,000 VNĐ", journal: [
+      { date: "10/03/2025", content: "Được phát hiện lang thang trong hẻm" },
+      { date: "12/03/2025", content: "Đã tiêm vaccine dại mũi 1" }
+    ]}
+  ];
+  
+  function getPets() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(PETS_KEY) || "[]");
+      if (stored.length === 0) return DEFAULT_PETS;
+      // Merge default pets with stored pets
+      const allPets = [...DEFAULT_PETS];
+      stored.forEach(p => {
+        if (!allPets.find(existing => existing.id === p.id)) {
+          allPets.push(p);
+        }
+      });
+      return allPets;
+    } catch { return DEFAULT_PETS; }
+  }
+  
+  function getDonations() {
+    try {
+      return JSON.parse(localStorage.getItem(DONATIONS_KEY) || "[]");
+    } catch { return []; }
+  }
+  
+  function formatPrice(n) {
+    return n.toLocaleString("vi-VN") + " VNĐ";
+  }
+  
+  function addDonation(amount, petId, purpose) {
+    const donations = getDonations();
+    donations.push({
+      id: Date.now(),
+      amount: amount,
+      petId: petId,
+      purpose: purpose,
+      donor: 'Khách',
+      time: new Date().toISOString()
+    });
+    localStorage.setItem(DONATIONS_KEY, JSON.stringify(donations));
+    renderPage();
+    showToast(`💝 Cảm ơn bạn đã donate ${formatPrice(amount)} cho ${petName}!`);
+  }
+  
+  function showToast(msg) {
+    // Tạo toast tạm thời
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--charcoal);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 30px;
+      z-index: 9999;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+  
+  function renderPage() {
+    const pets = getPets();
+    const pet = pets.find(p => p.id === petId);
+    const container = document.getElementById("petProfile");
+    
+    if (!pet) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 3rem;">
+          <div style="font-size: 4rem;">😿</div>
+          <h2>Không tìm thấy thú cưng!</h2>
+          <p>ID: ${petId} không tồn tại trong hệ thống.</p>
+          <a href="index.html" class="btn-primary" style="display: inline-block; margin-top: 1rem;">Quay lại trang chủ</a>
+        </div>
+      `;
+      return;
+    }
+    
+    const donations = getDonations();
+    const petDonations = donations.filter(d => d.petId === petId);
+    const totalDonated = petDonations.reduce((sum, d) => sum + d.amount, 0);
+    const targetAmount = 2000000; // Mục tiêu 2 triệu cho mỗi pet
+    const progress = Math.min((totalDonated / targetAmount) * 100, 100);
+    
+    container.innerHTML = `
+      <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px; text-align: center;">
+          <div style="font-size: 8rem; background: ${pet.bgColor}; border-radius: var(--radius-md); padding: 2rem;">${pet.emoji}</div>
+          <div style="margin-top: 1rem;">
+            <span class="tag tag-${pet.status === 'urgent' ? 'urgent' : pet.status === 'watch' ? 'watch' : 'safe'}">
+              ${pet.status === 'urgent' ? '🔴 Cần gấp' : pet.status === 'watch' ? '🟡 Theo dõi' : '🟢 An toàn'}
+            </span>
+          </div>
+        </div>
+        <div style="flex: 2;">
+          <h1 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 0.5rem;">${pet.name}</h1>
+          <div style="color: var(--mid-gray); margin-bottom: 1rem;">${pet.gender} · ${pet.age} · ${pet.location}</div>
+          <div class="pet-modal-tags" style="margin-bottom: 1rem;">
+            ${pet.tags.map(t => `<span class="pet-tag">${t}</span>`).join("")}
+            ${pet.vaccinated ? '<span class="pet-tag">💉 Đã vaccine</span>' : '<span class="pet-tag">Chưa vaccine</span>'}
+            ${pet.neutered ? '<span class="pet-tag">✂️ Đã triệt sản</span>' : ''}
+          </div>
+          <p style="line-height: 1.8; color: var(--charcoal-2); margin-bottom: 1.5rem;">${pet.desc}</p>
+          <div class="pet-modal-stats">
+            <div class="pet-stat"><div class="pet-stat-label">Thời gian nuôi tạm</div><div class="pet-stat-val">${pet.fosterDays} ngày</div></div>
+            <div class="pet-stat"><div class="pet-stat-label">Chi phí đã dùng</div><div class="pet-stat-val">${pet.costs}</div></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="funding-progress">
+        <h3 style="font-family: var(--font-body); font-size: 1rem; margin-bottom: 0.75rem;">💰 Quỹ cứu hộ cho ${pet.name}</h3>
+        <div class="progress-bar" style="width: ${progress}%"></div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <span>Đã quyên góp: ${formatPrice(totalDonated)}</span>
+          <span>Mục tiêu: ${formatPrice(targetAmount)}</span>
+        </div>
+      </div>
+      
+      <div style="margin-top: 2rem;">
+        <h3 style="font-family: var(--font-body); font-size: 1.2rem; margin-bottom: 1rem;">💝 Tài trợ cho ${pet.name}</h3>
+        <div class="funding-options">
+          <button onclick="donateForPet(50000, ${pet.id}, 'Thức ăn')">50K - Thức ăn</button>
+          <button onclick="donateForPet(100000, ${pet.id}, 'Thuốc men')">100K - Thuốc men</button>
+          <button onclick="donateForPet(200000, ${pet.id}, 'Vaccine')">200K - Vaccine</button>
+          <button onclick="donateForPet(500000, ${pet.id}, 'Triệt sản')">500K - Triệt sản</button>
+        </div>
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+          <input type="number" id="customAmount" placeholder="Số tiền khác..." style="flex: 1; padding: 0.75rem; border: 2px solid var(--light-gray); border-radius: var(--radius-sm);">
+          <button onclick="donateCustom(${pet.id})" class="btn-primary">Donate</button>
+        </div>
+      </div>
+      
+      <div style="margin-top: 2rem;">
+        <h3 style="font-family: var(--font-body); font-size: 1.2rem; margin-bottom: 1rem;">📓 Nhật ký hành trình của ${pet.name}</h3>
+        ${pet.journal ? pet.journal.map(j => `
+          <div class="journal-entry">
+            <div class="journal-date">📅 ${j.date}</div>
+            <div>${j.content}</div>
+          </div>
+        `).join('') : '<p>Chưa có cập nhật nào.</p>'}
+      </div>
+      
+      <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--light-gray); text-align: center;">
+        <button class="btn-primary" onclick="window.location.href='index.html#adopt'">🐾 Xem thêm thú cưng khác</button>
+        <button class="btn-outline" onclick="window.location.href='index.html#donate'" style="margin-left: 0.5rem;">💝 Donate chung</button>
+      </div>
+    `;
+  }
+  
+  function donateForPet(amount, petId, purpose) {
+    addDonation(amount, petId, purpose);
+  }
+  
+  function donateCustom(petId) {
+    const amount = parseInt(document.getElementById("customAmount")?.value);
+    if (!amount || amount <= 0) {
+      showToast("⚠️ Vui lòng nhập số tiền hợp lệ!");
+      return;
+    }
+    addDonation(amount, petId, "Tài trợ chung");
+    document.getElementById("customAmount").value = "";
+  }
+  
+  // Global functions cho button onclick
+  window.donateForPet = donateForPet;
+  window.donateCustom = donateCustom;
+  
+  renderPage();
+</script>
+</body>
+</html>
