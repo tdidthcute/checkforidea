@@ -754,6 +754,21 @@ function renderAddForm(prefill = {}) {
             <label>Số ngày nuôi tạm</label>
             <input type="number" id="petFosterDays" placeholder="0" value="${prefill.fosterDays || 0}" min="0"/>
           </div>
+          <div class="fgroup form-full">
+            <label>🔗 Link QR Code (tùy chỉnh)</label>
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;flex-wrap:wrap;">
+              <input type="text" id="petQrUrl" placeholder="VD: https://pawlink.vn/pet/mochi hoặc link Zalo, Facebook..." value="${prefill.qrUrl || ''}" style="flex:1;min-width:200px" oninput="previewAdminQr(this.value)"/>
+              <button type="button" class="btn-view" style="flex-shrink:0;padding:0.6rem 1rem" onclick="previewAdminQr(document.getElementById('petQrUrl').value)">🔍 Preview</button>
+            </div>
+            <div id="qrPreviewWrap" style="margin-top:0.75rem;display:none;align-items:center;gap:1rem;background:var(--cream);border-radius:var(--radius-sm);padding:0.75rem;flex-wrap:wrap;">
+              <canvas id="qrPreviewCanvas" width="120" height="120"></canvas>
+              <div style="font-size:0.78rem;color:var(--mid-gray);">
+                <div style="font-weight:700;margin-bottom:0.25rem;">✅ QR hợp lệ</div>
+                <div id="qrPreviewUrl" style="word-break:break-all;max-width:250px;"></div>
+                <button type="button" id="qrDownloadBtn" style="margin-top:0.5rem;padding:0.3rem 0.75rem;background:var(--forest);color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;">⬇️ Tải QR về</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="form-actions">
@@ -824,6 +839,7 @@ function submitAddPet() {
   const bgColorHex = document.getElementById("petBgColor").value;
   const costs = document.getElementById("petCosts").value.trim() || "0 VNĐ";
   const fosterDays = parseInt(document.getElementById("petFosterDays").value) || 0;
+  const qrUrl = (document.getElementById("petQrUrl")?.value || "").trim();
 
   approvedList = getApproved();
 
@@ -837,7 +853,8 @@ function submitAddPet() {
         bgColor: bgColorHex, 
         costs, fosterDays, 
         emoji: selectedEmoji, 
-        tags: [...currentTags] 
+        tags: [...currentTags],
+        qrUrl
       };
     }
     saveApproved(approvedList);
@@ -852,6 +869,7 @@ function submitAddPet() {
       bgColor: bgColorHex,
       tags: [...currentTags],
       costs, fosterDays,
+      qrUrl,
       status: "approved",
       approvedTime: new Date().toLocaleString("vi-VN"),
       reporter: "Admin",
@@ -862,6 +880,36 @@ function submitAddPet() {
   }
 
   navigateTo("approved");
+}
+
+
+// ===== QR CODE HELPERS (Admin form) =====
+function previewAdminQr(url) {
+  const wrap = document.getElementById("qrPreviewWrap");
+  const urlEl = document.getElementById("qrPreviewUrl");
+  const canvas = document.getElementById("qrPreviewCanvas");
+  const dlBtn = document.getElementById("qrDownloadBtn");
+  if (!wrap || !canvas) return;
+  if (!url || url.trim() === "") { wrap.style.display = "none"; return; }
+  wrap.style.display = "flex";
+  urlEl.textContent = url;
+  // Load QRious if not loaded
+  if (typeof QRious === "undefined") {
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js";
+    s.onload = () => { new QRious({ element: canvas, value: url, size: 120, backgroundAlpha: 1 }); };
+    document.head.appendChild(s);
+  } else {
+    new QRious({ element: canvas, value: url, size: 120, backgroundAlpha: 1 });
+  }
+  if (dlBtn) {
+    dlBtn.onclick = () => {
+      const link = document.createElement("a");
+      link.download = "qr-pet.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+  }
 }
 
 // ===== MERCH MANAGEMENT =====
