@@ -1,12 +1,14 @@
 /* ========================================
-   PAWLINK — admin.js
+   PAWCONNECT — admin.js
    Admin panel logic: login, CRUD, approve/reject
+   Version: Add edit pet feature
 ======================================== */
 
 // ===== STATE =====
 // Shared storage key with main site
 const STORAGE_KEY = "pawlink_pets";
 const PENDING_KEY = "pawlink_pending";
+const MERCH_KEY = "pawlink_merch";
 
 // Seed pending reports (simulated incoming reports from public users)
 const SEED_PENDING = [
@@ -52,6 +54,19 @@ const SEED_PENDING = [
   }
 ];
 
+// Seed merch data (default)
+const DEFAULT_MERCH = [
+  { id: 1, name: "Áo Phông PAWCONNECT Classic", type: "apparel", emoji: "👕", price: 250000, desc: "Unisex, cotton 100%, in lưới cao cấp.", badge: "Bán chạy nhất", bgColor: "#E8F0FF", campus: "all" },
+  { id: 2, name: "Hoodie Bách Khoa Edition", type: "apparel", emoji: "🧥", price: 480000, desc: "Nỉ ấm, có in logo ĐH Bách Khoa.", badge: "Campus", bgColor: "#FFF0E8", campus: "bachkhoa" },
+  { id: 3, name: "Tote Bag Kinh Tế Edition", type: "accessory", emoji: "👜", price: 150000, desc: "Canvas dày, in logo ĐH Kinh tế.", badge: "Campus", bgColor: "#E8FFE8", campus: "kinhte" },
+  { id: 4, name: "Bộ Sticker PAWCONNECT Vol.1", type: "sticker", emoji: "🎨", price: 45000, desc: "12 sticker chống nước. Thiết kế chibi mèo chó cute.", badge: "45K", bgColor: "#FFF8E0", campus: "all" },
+  { id: 5, name: "Blindbox Mèo Bí Ẩn", type: "blindbox", emoji: "📦", price: 89000, desc: "Mở hộp bất ngờ! Sưu tầm 6 loại mèo khác nhau.", badge: "Hot", bgColor: "#FFE8E8", campus: "all" },
+  { id: 6, name: "Nón Sư Phạm Edition", type: "apparel", emoji: "🧢", price: 220000, desc: "Chất liệu chống nắng tốt. Thêu logo ĐH Sư Phạm.", badge: "Campus", bgColor: "#E8F5FF", campus: "supham" },
+  { id: 7, name: "Keychain KHTN Edition", type: "accessory", emoji: "🔑", price: 65000, desc: "Hợp kim kẽm mạ vàng. Logo ĐH KHTN.", badge: "Campus", bgColor: "#F5E8FF", campus: "khhtn" },
+  { id: 8, name: "Blindbox Chó Siêu Quậy", type: "blindbox", emoji: "📦", price: 89000, desc: "Sưu tầm 6 loại chó cute.", badge: "New", bgColor: "#E8FFF5", campus: "all" },
+  { id: 9, name: "Ốp Điện Thoại Bách Khoa", type: "accessory", emoji: "📱", price: 120000, desc: "Ốp silicon, in hình trường Bách Khoa.", badge: "Campus", bgColor: "#FFF0F5", campus: "bachkhoa" },
+];
+
 // Get or initialize state
 function getApproved() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; }
@@ -66,15 +81,28 @@ function getPending() {
     return stored;
   } catch { return SEED_PENDING; }
 }
+function getMerch() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(MERCH_KEY) || "null");
+    if (!stored) {
+      localStorage.setItem(MERCH_KEY, JSON.stringify(DEFAULT_MERCH));
+      return DEFAULT_MERCH;
+    }
+    return stored;
+  } catch { return DEFAULT_MERCH; }
+}
 function savePending(data) { localStorage.setItem(PENDING_KEY, JSON.stringify(data)); }
 function saveApproved(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function saveMerch(data) { localStorage.setItem(MERCH_KEY, JSON.stringify(data)); }
 
 let currentPage = "overview";
 let pendingList = [];
 let approvedList = [];
+let merchList = [];
 let selectedEmoji = "🐱";
 let currentTags = [];
 let editingId = null;
+let editingMerchId = null;
 
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
@@ -84,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   pendingList = getPending();
   approvedList = getApproved();
+  merchList = getMerch();
   updatePendingBadge();
 });
 
@@ -118,7 +147,6 @@ function initSidebar() {
     link.addEventListener("click", () => {
       const page = link.dataset.page;
       if (page) navigateTo(page);
-      // close mobile sidebar
       document.getElementById("sidebar").classList.remove("mobile-open");
     });
   });
@@ -139,12 +167,10 @@ function initSidebar() {
 function navigateTo(page) {
   currentPage = page;
 
-  // Update active link
   document.querySelectorAll(".sidebar-link").forEach(l => {
     l.classList.toggle("active", l.dataset.page === page);
   });
 
-  // Update topbar title
   const titles = {
     overview: "Dashboard Tổng quan",
     pending: "Duyệt báo cáo cứu hộ",
@@ -152,14 +178,15 @@ function navigateTo(page) {
     rejected: "Báo cáo đã từ chối",
     add: "Thêm thú cưng mới",
     fosters: "Danh sách người nuôi tạm",
-    volunteers: "Danh sách tình nguyện viên"
+    volunteers: "Danh sách tình nguyện viên",
+    merch: "Quản lý Merch"
   };
   document.getElementById("topbarTitle").textContent = titles[page] || page;
 
-  // Render page
   const content = document.getElementById("pageContent");
   pendingList = getPending();
   approvedList = getApproved();
+  merchList = getMerch();
 
   switch (page) {
     case "overview": renderOverview(); break;
@@ -169,6 +196,7 @@ function navigateTo(page) {
     case "add": renderAddForm(); break;
     case "fosters": renderFosters(); break;
     case "volunteers": renderVolunteers(); break;
+    case "merch": renderMerchManagement(); break;
   }
 }
 
@@ -319,23 +347,9 @@ function filterPendingCondition(val) {
   pendingList = getPending();
   let items = pendingList.filter(p => p.status === "pending");
   if (val) items = items.filter(p => p.condition === val);
-  document.getElementById("pageContent").querySelector(".tbl")?.closest("div").outerHTML;
-
   const content = document.getElementById("pageContent");
   const tableWrap = content.querySelector("[style*='overflow-x']");
   if (tableWrap) tableWrap.outerHTML = `<div style="overflow-x:auto">${renderPendingTable(items, false)}</div>`;
-  navigateTo_soft("pending", val);
-}
-
-function navigateTo_soft(page, filter) {
-  pendingList = getPending();
-  let items = pendingList.filter(p => p.status === "pending");
-  if (filter) items = items.filter(p => p.condition === filter);
-  const wrap = document.getElementById("pageContent").querySelector(".table-card");
-  if (wrap) {
-    const tbl = wrap.querySelector("[style*='overflow-x']");
-    if (tbl) tbl.innerHTML = renderPendingTable(items, false);
-  }
 }
 
 // ===== APPROVE =====
@@ -349,7 +363,6 @@ function approvePet(id) {
   const pet = { ...pendingList[idx] };
   pet.status = "approved";
   pet.approvedTime = new Date().toLocaleString("vi-VN");
-  // Add to approved list with unique id
   pet.id = Date.now();
   pet.fosterDays = 0;
 
@@ -454,7 +467,7 @@ function viewPet(id, source) {
   openModal();
 }
 
-// ===== APPROVED =====
+// ===== APPROVED (with Edit button) =====
 function renderApproved() {
   approvedList = getApproved();
 
@@ -518,7 +531,8 @@ function renderApprovedTable(items) {
               <td>
                 <div class="action-btns">
                   <button class="btn-view" onclick="viewPet('${pet.id}', 'approved')">👁 Xem</button>
-                  <button class="btn-delete" onclick="removePet(${pet.id})" title="Gỡ khỏi danh sách">🗑</button>
+                  <button class="btn-edit" onclick="editPet(${pet.id})">✏️ Sửa</button>
+                  <button class="btn-delete" onclick="removePet(${pet.id})" title="Gỡ khỏi danh sách">🗑 Xóa</button>
                 </div>
               </td>
             </tr>
@@ -527,6 +541,34 @@ function renderApprovedTable(items) {
       </table>
     </div>
   `;
+}
+
+// ===== EDIT PET (THÊM MỚI) =====
+function editPet(id) {
+  const pet = getApproved().find(p => p.id === id);
+  if (!pet) return;
+  
+  // Chuyển về form thêm với dữ liệu đã có
+  renderAddForm({
+    id: pet.id,
+    name: pet.name,
+    type: pet.type,
+    gender: pet.gender,
+    age: pet.age,
+    location: pet.location,
+    condition: pet.condition,
+    desc: pet.desc,
+    vaccinated: pet.vaccinated,
+    neutered: pet.neutered,
+    emoji: pet.emoji,
+    bgColorHex: pet.bgColor,
+    tags: pet.tags,
+    costs: pet.costs,
+    fosterDays: pet.fosterDays
+  });
+  
+  // Chuyển tab sang "Thêm thú cưng"
+  navigateTo("add");
 }
 
 function removePet(id) {
@@ -560,13 +602,13 @@ function renderRejected() {
                       <div class="pet-emoji-sm" style="background:${pet.bgColor}">${pet.emoji}</div>
                       <div><div class="pet-cell-name">${pet.name}</div><div class="pet-cell-sub">${pet.location}</div></div>
                     </div>
-                  </td>
+                   </td>
                   <td>${pet.reporter}<br/><span style="font-size:0.72rem;color:var(--mid-gray)">${pet.phone}</span></td>
                   <td style="font-size:0.82rem;color:var(--red);max-width:200px">${pet.rejectReason || "—"}</td>
                   <td style="font-size:0.78rem;color:var(--mid-gray)">${pet.rejectedTime || "—"}</td>
                   <td>
                     <button class="btn-approve" style="font-size:0.72rem" onclick="reApprove('${pet.id}')">↩ Duyệt lại</button>
-                  </td>
+                   </td>
                 </tr>
               `).join("")}
             </tbody>
@@ -600,7 +642,7 @@ function reApprove(id) {
   navigateTo("rejected");
 }
 
-// ===== ADD PET FORM =====
+// ===== ADD PET FORM (with edit support) =====
 function renderAddForm(prefill = {}) {
   currentTags = prefill.tags || [];
   selectedEmoji = prefill.emoji || "🐱";
@@ -771,20 +813,30 @@ function submitAddPet() {
   approvedList = getApproved();
 
   if (editingId) {
+    // Cập nhật thú cưng hiện có
     const idx = approvedList.findIndex(p => p.id === editingId);
     if (idx !== -1) {
-      approvedList[idx] = { ...approvedList[idx], name, type, gender, age, location, condition, desc, vaccinated, neutered, bgColor: bgColorHex, bgColorHex, costs, fosterDays, emoji: selectedEmoji, tags: [...currentTags] };
+      approvedList[idx] = { 
+        ...approvedList[idx], 
+        name, type, gender, age, location, condition, desc, 
+        vaccinated, neutered, 
+        bgColor: bgColorHex, 
+        costs, fosterDays, 
+        emoji: selectedEmoji, 
+        tags: [...currentTags] 
+      };
     }
     saveApproved(approvedList);
     showToast(`✏️ Đã cập nhật thông tin "${name}"!`);
+    editingId = null;
   } else {
+    // Thêm mới thú cưng
     const newPet = {
       id: Date.now(),
       name, type, gender, age, location, condition, desc,
       vaccinated, neutered,
       emoji: selectedEmoji,
       bgColor: bgColorHex,
-      bgColorHex,
       tags: [...currentTags],
       costs, fosterDays,
       status: "approved",
@@ -796,8 +848,268 @@ function submitAddPet() {
     showToast(`✅ Đã thêm "${name}" vào danh sách nhận nuôi!`);
   }
 
-  editingId = null;
   navigateTo("approved");
+}
+
+// ===== MERCH MANAGEMENT (THÊM MỚI) =====
+function renderMerchManagement() {
+  merchList = getMerch();
+  
+  document.getElementById("pageContent").innerHTML = `
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-title">🛍️ Quản lý sản phẩm Merch (${merchList.length})</span>
+        <button class="btn-submit" onclick="showAddMerchForm()">+ Thêm sản phẩm</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Sản phẩm</th>
+              <th>Tên</th>
+              <th>Giá</th>
+              <th>Loại</th>
+              <th>Campus</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="merchTableBody">
+            ${renderMerchTable(merchList)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function renderMerchTable(items) {
+  if (items.length === 0) {
+    return `<tr><td colspan="7" style="text-align:center;padding:2rem">Chưa có sản phẩm nào</td></tr>`;
+  }
+  return items.map(item => `
+    <tr>
+      <td style="font-family:var(--font-mono);font-size:0.8rem">${item.id}</td>
+      <td><span style="font-size:1.5rem">${item.emoji}</span></td>
+      <td style="font-weight:600">${item.name}</td>
+      <td style="font-family:var(--font-mono);color:var(--terracotta)">${item.price.toLocaleString()}₫</td>
+      <td><span class="sbadge sbadge-approved">${item.type}</span></td>
+      <td><span class="sbadge sbadge-watch">${item.campus === 'all' ? 'Tất cả' : item.campus}</span></td>
+      <td>
+        <div class="action-btns">
+          <button class="btn-edit" onclick="editMerch(${item.id})">✏️ Sửa</button>
+          <button class="btn-delete" onclick="deleteMerch(${item.id})">🗑 Xóa</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function showAddMerchForm() {
+  editingMerchId = null;
+  document.getElementById("pageContent").innerHTML = `
+    <div class="add-form-card">
+      <h2 style="font-family:var(--font-display);font-size:1.5rem;margin-bottom:1.75rem">
+        ➕ Thêm sản phẩm Merch mới
+      </h2>
+      <form id="addMerchForm">
+        <div class="form-grid">
+          <div class="fgroup">
+            <label>Tên sản phẩm *</label>
+            <input type="text" id="merchName" placeholder="VD: Áo Phông PAWCONNECT" required/>
+          </div>
+          <div class="fgroup">
+            <label>Emoji *</label>
+            <input type="text" id="merchEmoji" placeholder="VD: 👕, 🧥, 👜" value="👕" required/>
+          </div>
+          <div class="fgroup">
+            <label>Giá (VNĐ) *</label>
+            <input type="number" id="merchPrice" placeholder="250000" required/>
+          </div>
+          <div class="fgroup">
+            <label>Loại</label>
+            <select id="merchType">
+              <option value="apparel">👕 Áo quần</option>
+              <option value="accessory">🎒 Phụ kiện</option>
+              <option value="sticker">🎨 Sticker</option>
+              <option value="blindbox">📦 Blindbox</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label>Campus Edition</label>
+            <select id="merchCampus">
+              <option value="all">🎓 Tất cả trường</option>
+              <option value="bachkhoa">🏫 ĐH Bách Khoa</option>
+              <option value="kinhte">📈 ĐH Kinh tế</option>
+              <option value="supham">📚 ĐH Sư Phạm</option>
+              <option value="khhtn">🔬 ĐH KHTN</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label>Badge (nổi bật)</label>
+            <input type="text" id="merchBadge" placeholder="VD: Bán chạy nhất, Campus, Hot... (để trống nếu không có)"/>
+          </div>
+          <div class="fgroup form-full">
+            <label>Mô tả *</label>
+            <textarea id="merchDesc" rows="3" placeholder="Mô tả sản phẩm..." required></textarea>
+          </div>
+          <div class="fgroup">
+            <label>Màu nền</label>
+            <input type="color" id="merchBgColor" value="#E8F0FF" style="height:42px;cursor:pointer"/>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">💾 Lưu sản phẩm</button>
+          <button type="button" class="btn-reset" onclick="cancelMerchForm()">❌ Hủy</button>
+        </div>
+      </form>
+    </div>
+  `;
+  
+  document.getElementById("addMerchForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    submitAddMerch();
+  });
+}
+
+function submitAddMerch() {
+  const name = document.getElementById("merchName").value.trim();
+  const emoji = document.getElementById("merchEmoji").value.trim();
+  const price = parseInt(document.getElementById("merchPrice").value);
+  const type = document.getElementById("merchType").value;
+  const campus = document.getElementById("merchCampus").value;
+  const badge = document.getElementById("merchBadge").value.trim();
+  const desc = document.getElementById("merchDesc").value.trim();
+  const bgColor = document.getElementById("merchBgColor").value;
+  
+  if (!name || !emoji || !price || !desc) {
+    showToast("⚠️ Vui lòng điền đầy đủ thông tin!");
+    return;
+  }
+  
+  merchList = getMerch();
+  const newId = Math.max(...merchList.map(m => m.id), 0) + 1;
+  
+  const newMerch = {
+    id: newId,
+    name, emoji, price, type, campus, desc, bgColor,
+    badge: badge || null
+  };
+  
+  merchList.push(newMerch);
+  saveMerch(merchList);
+  showToast(`✅ Đã thêm sản phẩm "${name}"!`);
+  navigateTo("merch");
+}
+
+function editMerch(id) {
+  merchList = getMerch();
+  const item = merchList.find(m => m.id === id);
+  if (!item) return;
+  
+  editingMerchId = id;
+  
+  document.getElementById("pageContent").innerHTML = `
+    <div class="add-form-card">
+      <h2 style="font-family:var(--font-display);font-size:1.5rem;margin-bottom:1.75rem">
+        ✏️ Chỉnh sửa sản phẩm: ${item.name}
+      </h2>
+      <form id="editMerchForm">
+        <div class="form-grid">
+          <div class="fgroup">
+            <label>Tên sản phẩm *</label>
+            <input type="text" id="merchName" value="${item.name}" required/>
+          </div>
+          <div class="fgroup">
+            <label>Emoji *</label>
+            <input type="text" id="merchEmoji" value="${item.emoji}" required/>
+          </div>
+          <div class="fgroup">
+            <label>Giá (VNĐ) *</label>
+            <input type="number" id="merchPrice" value="${item.price}" required/>
+          </div>
+          <div class="fgroup">
+            <label>Loại</label>
+            <select id="merchType">
+              <option value="apparel" ${item.type === 'apparel' ? 'selected' : ''}>👕 Áo quần</option>
+              <option value="accessory" ${item.type === 'accessory' ? 'selected' : ''}>🎒 Phụ kiện</option>
+              <option value="sticker" ${item.type === 'sticker' ? 'selected' : ''}>🎨 Sticker</option>
+              <option value="blindbox" ${item.type === 'blindbox' ? 'selected' : ''}>📦 Blindbox</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label>Campus Edition</label>
+            <select id="merchCampus">
+              <option value="all" ${item.campus === 'all' ? 'selected' : ''}>🎓 Tất cả trường</option>
+              <option value="bachkhoa" ${item.campus === 'bachkhoa' ? 'selected' : ''}>🏫 ĐH Bách Khoa</option>
+              <option value="kinhte" ${item.campus === 'kinhte' ? 'selected' : ''}>📈 ĐH Kinh tế</option>
+              <option value="supham" ${item.campus === 'supham' ? 'selected' : ''}>📚 ĐH Sư Phạm</option>
+              <option value="khhtn" ${item.campus === 'khhtn' ? 'selected' : ''}>🔬 ĐH KHTN</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label>Badge (nổi bật)</label>
+            <input type="text" id="merchBadge" value="${item.badge || ''}" placeholder="VD: Bán chạy nhất..."/>
+          </div>
+          <div class="fgroup form-full">
+            <label>Mô tả *</label>
+            <textarea id="merchDesc" rows="3" required>${item.desc}</textarea>
+          </div>
+          <div class="fgroup">
+            <label>Màu nền</label>
+            <input type="color" id="merchBgColor" value="${item.bgColor}" style="height:42px;cursor:pointer"/>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">💾 Lưu thay đổi</button>
+          <button type="button" class="btn-reset" onclick="cancelMerchForm()">❌ Hủy</button>
+        </div>
+      </form>
+    </div>
+  `;
+  
+  document.getElementById("editMerchForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    updateMerch();
+  });
+}
+
+function updateMerch() {
+  const name = document.getElementById("merchName").value.trim();
+  const emoji = document.getElementById("merchEmoji").value.trim();
+  const price = parseInt(document.getElementById("merchPrice").value);
+  const type = document.getElementById("merchType").value;
+  const campus = document.getElementById("merchCampus").value;
+  const badge = document.getElementById("merchBadge").value.trim();
+  const desc = document.getElementById("merchDesc").value.trim();
+  const bgColor = document.getElementById("merchBgColor").value;
+  
+  if (!name || !emoji || !price || !desc) {
+    showToast("⚠️ Vui lòng điền đầy đủ thông tin!");
+    return;
+  }
+  
+  merchList = getMerch();
+  const idx = merchList.findIndex(m => m.id === editingMerchId);
+  if (idx !== -1) {
+    merchList[idx] = { ...merchList[idx], name, emoji, price, type, campus, desc, bgColor, badge: badge || null };
+    saveMerch(merchList);
+    showToast(`✏️ Đã cập nhật sản phẩm "${name}"!`);
+  }
+  
+  navigateTo("merch");
+}
+
+function deleteMerch(id) {
+  if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
+  merchList = getMerch().filter(m => m.id !== id);
+  saveMerch(merchList);
+  showToast("🗑 Đã xóa sản phẩm!");
+  renderMerchManagement();
+}
+
+function cancelMerchForm() {
+  navigateTo("merch");
 }
 
 // ===== FOSTERS =====
@@ -903,12 +1215,26 @@ function renderVolunteers() {
 }
 
 // ===== MODAL HELPERS =====
-function openModal() { document.getElementById("detailModal").classList.add("open"); document.body.style.overflow = "hidden"; }
-function closeModal() { document.getElementById("detailModal").classList.remove("open"); document.body.style.overflow = ""; }
+function openModal() { 
+  const modal = document.getElementById("detailModal");
+  if (modal) {
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+}
+function closeModal() { 
+  const modal = document.getElementById("detailModal");
+  if (modal) {
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+}
 
-document.getElementById("detailModal").addEventListener("click", e => {
-  if (e.target === document.getElementById("detailModal")) closeModal();
-});
+if (document.getElementById("detailModal")) {
+  document.getElementById("detailModal").addEventListener("click", e => {
+    if (e.target === document.getElementById("detailModal")) closeModal();
+  });
+}
 
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
@@ -916,8 +1242,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal()
 let toastTimeout;
 function showToast(msg) {
   const toast = document.getElementById("toast");
-  toast.textContent = msg;
-  toast.classList.add("show");
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => toast.classList.remove("show"), 3500);
+  if (toast) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => toast.classList.remove("show"), 3500);
+  }
 }
