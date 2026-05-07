@@ -100,16 +100,18 @@ let editingFosterId = null;
 let editingVolunteerId = null;
 
 // ===== SESSION CHECK =====
-// Nếu đã login qua login.html, tự động vào admin
+// Kiểm tra session khi trang load. Nếu không có session hợp lệ → show login
 function checkSession() {
   try {
     const sess = JSON.parse(localStorage.getItem("pawlink_session") || "null");
     if (sess && sess.role === "admin") {
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("adminApp").style.display = "flex";
+      // Đã login → ẩn login screen (nó đã display:none), show app (đã display:flex)
       return true;
     }
   } catch {}
+  // Chưa login → show login screen, ẩn app
+  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("adminApp").style.display = "none";
   return false;
 }
 
