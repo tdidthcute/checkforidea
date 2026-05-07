@@ -99,8 +99,24 @@ let editingMerchId = null;
 let editingFosterId = null;
 let editingVolunteerId = null;
 
+// ===== SESSION CHECK =====
+// Nếu đã login qua login.html, tự động vào admin
+function checkSession() {
+  try {
+    const sess = JSON.parse(localStorage.getItem("pawlink_session") || "null");
+    if (sess && sess.role === "admin") {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("adminApp").style.display = "flex";
+      return true;
+    }
+  } catch {}
+  return false;
+}
+
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
+  const alreadyLoggedIn = checkSession();
+
   initLogin();
   initSidebar();
   initModal();
@@ -109,6 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
   approvedList = getApproved();
   merchList = getMerch();
   updatePendingBadge();
+
+  if (alreadyLoggedIn) navigateTo("overview");
 });
 
 // ===== LOGIN =====
@@ -119,6 +137,8 @@ function initLogin() {
     const pass = document.getElementById("loginPass").value.trim();
 
     if (user === "admin" && pass === "pawlink123") {
+      // Lưu session để nhất quán với login.html
+      localStorage.setItem("pawlink_session", JSON.stringify({ name: "Admin PawLink", role: "admin", email: "admin@pawlink.vn" }));
       document.getElementById("loginScreen").style.display = "none";
       document.getElementById("adminApp").style.display = "flex";
       navigateTo("overview");
@@ -130,6 +150,7 @@ function initLogin() {
 }
 
 function logout() {
+  localStorage.removeItem("pawlink_session"); // xóa session từ login.html
   document.getElementById("adminApp").style.display = "none";
   document.getElementById("loginScreen").style.display = "flex";
   document.getElementById("loginUser").value = "";
