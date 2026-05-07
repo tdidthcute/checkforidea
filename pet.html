@@ -72,6 +72,7 @@
       margin-bottom: 0.5rem;
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
 <body style="background: var(--cream);">
 
@@ -250,6 +251,18 @@
         `).join('') : '<p>Chưa có cập nhật nào.</p>'}
       </div>
       
+      <div id="qrSection" style="margin-top: 2rem; display: none;">
+        <h3 style="font-family: var(--font-body); font-size: 1.2rem; margin-bottom: 1rem;">📱 QR Code liên hệ / thông tin</h3>
+        <div style="display:flex;align-items:center;gap:1.5rem;background:var(--cream);border-radius:var(--radius-sm);padding:1.25rem;flex-wrap:wrap;">
+          <canvas id="petQrCanvas" width="140" height="140" style="border-radius:8px;background:white;padding:6px;box-shadow:0 2px 8px rgba(0,0,0,0.1);"></canvas>
+          <div>
+            <div style="font-weight:700;margin-bottom:0.5rem;">Quét để xem thêm thông tin</div>
+            <div id="petQrUrlDisplay" style="font-size:0.78rem;color:var(--mid-gray);word-break:break-all;max-width:300px;margin-bottom:0.75rem;"></div>
+            <button onclick="downloadPetQr()" style="padding:0.4rem 1rem;background:var(--terracotta);color:white;border:none;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:600;">⬇️ Tải QR về</button>
+          </div>
+        </div>
+      </div>
+
       <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--light-gray); text-align: center;">
         <button class="btn-primary" onclick="window.location.href='index.html#adopt'">🐾 Xem thêm thú cưng khác</button>
         <button class="btn-outline" onclick="window.location.href='index.html#donate'" style="margin-left: 0.5rem;">💝 Donate chung</button>
@@ -271,10 +284,37 @@
     document.getElementById("customAmount").value = "";
   }
   
+  // Render QR if pet has qrUrl
+  function renderPetQr(pet) {
+    const section = document.getElementById("qrSection");
+    const canvas = document.getElementById("petQrCanvas");
+    const urlDisplay = document.getElementById("petQrUrlDisplay");
+    if (!section || !canvas || !pet.qrUrl) return;
+    section.style.display = "block";
+    urlDisplay.textContent = pet.qrUrl;
+    new QRious({ element: canvas, value: pet.qrUrl, size: 140, backgroundAlpha: 1 });
+  }
+
+  window.downloadPetQr = function() {
+    const canvas = document.getElementById("petQrCanvas");
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = "qr-pet.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
   // Global functions cho button onclick
   window.donateForPet = donateForPet;
   window.donateCustom = donateCustom;
   
+  const _origRenderPage = renderPage;
+  function renderPage() {
+    _origRenderPage();
+    const pets = getPets();
+    const pet = pets.find(p => p.id === petId);
+    if (pet) renderPetQr(pet);
+  }
   renderPage();
 </script>
 </body>
