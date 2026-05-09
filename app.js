@@ -951,3 +951,69 @@ function showToast(msg) {
   clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => toast.classList.remove("show"), 3500);
 }
+// ===== AUTO REFRESH REAL-TIME =====
+let lastPetsCount = 0;
+let lastDonationsCount = 0;
+
+function checkAndRefresh() {
+  // Lấy dữ liệu mới nhất từ localStorage
+  const currentPets = JSON.parse(localStorage.getItem(STORAGE_KEYS.PETS) || '[]');
+  const currentDonations = JSON.parse(localStorage.getItem(STORAGE_KEYS.DONATIONS) || '[]');
+  
+  const currentPetsCount = currentPets.length;
+  const currentDonationsCount = currentDonations.length;
+  
+  // Kiểm tra có thay đổi không
+  if (currentPetsCount !== lastPetsCount) {
+    console.log(`🔄 Phát hiện thay đổi: Thú cưng (${lastPetsCount} → ${currentPetsCount})`);
+    refreshAllData();
+    showToast('📢 Danh sách thú cưng đã được cập nhật!');
+  }
+  
+  if (currentDonationsCount !== lastDonationsCount) {
+    console.log(`🔄 Phát hiện thay đổi: Donate (${lastDonationsCount} → ${currentDonationsCount})`);
+    refreshAllData();
+    showToast('💝 Có donate mới! Cảm ơn nhà hảo tâm!');
+  }
+  
+  lastPetsCount = currentPetsCount;
+  lastDonationsCount = currentDonationsCount;
+}
+
+function refreshAllData() {
+  // Cập nhật tất cả các component
+  if (typeof initPetsGrid === 'function') initPetsGrid();
+  if (typeof initQRGrid === 'function') initQRGrid();
+  if (typeof initMerchGrid === 'function') initMerchGrid();
+  if (typeof initDonors === 'function') initDonors();
+  if (typeof updateTotalFund === 'function') updateTotalFund();
+  if (typeof renderDashboard === 'function' && currentDashTab) renderDashboard(currentDashTab);
+}
+
+// Khởi tạo giá trị ban đầu
+function initAutoRefresh() {
+  const currentPets = JSON.parse(localStorage.getItem(STORAGE_KEYS.PETS) || '[]');
+  const currentDonations = JSON.parse(localStorage.getItem(STORAGE_KEYS.DONATIONS) || '[]');
+  lastPetsCount = currentPets.length;
+  lastDonationsCount = currentDonations.length;
+  
+  // Chạy kiểm tra mỗi 3 giây
+  setInterval(() => {
+    // Chỉ chạy khi đang ở trang chủ
+    const isHomePage = window.location.pathname === '/' || 
+                       window.location.pathname.includes('index.html') ||
+                       window.location.pathname.endsWith('/');
+    if (isHomePage) {
+      checkAndRefresh();
+    }
+  }, 3000);
+  
+  console.log('✅ Auto refresh đã được kích hoạt (kiểm tra mỗi 3 giây)');
+}
+
+// Gọi hàm khởi tạo sau khi trang đã load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAutoRefresh);
+} else {
+  initAutoRefresh();
+}
