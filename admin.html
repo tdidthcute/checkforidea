@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PawLink Admin — Quản lý cứu hộ</title>
+  <title>PAWGEN Admin — Quản lý cứu hộ</title>
   <link rel="stylesheet" href="admin.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
   <!-- LOGIN SCREEN -->
-  <div class="login-screen" id="loginScreen" style="display:none">
+  <div class="login-screen" id="loginScreen">
     <div class="login-box">
-      <div class="login-logo">🐾 PawLink Admin</div>
+      <div class="login-logo">🐾 PAWGEN Admin</div>
       <p class="login-sub">Đăng nhập để quản lý hệ thống cứu hộ</p>
       <form id="loginForm">
         <div class="lform-group">
@@ -23,7 +23,7 @@
           <label>Mật khẩu</label>
           <input type="password" id="loginPass" placeholder="••••••••"/>
         </div>
-        <div class="login-hint">💡 Dùng: <strong>admin</strong> / <strong>pawlink123</strong></div>
+        <div class="login-hint">💡 Dùng: <strong>admin</strong> / <strong>pawgen123</strong></div>
         <button type="submit" class="btn-login">Đăng nhập →</button>
         <div class="login-error" id="loginError">Sai tên đăng nhập hoặc mật khẩu!</div>
       </form>
@@ -31,13 +31,13 @@
   </div>
 
   <!-- ADMIN APP -->
-  <div class="admin-app" id="adminApp" style="display:flex">
+  <div class="admin-app" id="adminApp" style="display:none">
 
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-logo">
         <span>🐾</span>
-        <span>PawLink</span>
+        <span>PAWGEN</span>
         <span class="admin-chip">Admin</span>
       </div>
 
@@ -59,25 +59,22 @@
           <span class="sicon">❌</span> Đã từ chối
         </a>
 
-<div class="nav-section-label">Quản lý</div>
-<a class="sidebar-link" data-page="add">
-  <span class="sicon">➕</span> Thêm thú cưng
-</a>
-<a class="sidebar-link" data-page="merch">   <!-- THÊM DÒNG NÀY -->
-  <span class="sicon">🛍️</span> Quản lý Merch
-</a>
-<a class="sidebar-link" data-page="fosters">
-  <span class="sicon">🏠</span> Người nuôi tạm
-</a>
-<a class="sidebar-link" data-page="volunteers">
-  <span class="sicon">🙋</span> Tình nguyện viên
+        <div class="nav-section-label">Quản lý</div>
+        <a class="sidebar-link" data-page="add">
+          <span class="sicon">➕</span> Thêm thú cưng
+        </a>
+        <a class="sidebar-link" data-page="fosters">
+          <span class="sicon">🏠</span> Người nuôi tạm
+        </a>
+        <a class="sidebar-link" data-page="volunteers">
+          <span class="sicon">🙋</span> Tình nguyện viên
         </a>
       </nav>
 
       <div class="sidebar-user">
         <div class="sidebar-avatar">👤</div>
         <div>
-          <div class="sidebar-username">Admin PawLink</div>
+          <div class="sidebar-username">Admin PAWGEN</div>
           <div class="sidebar-role">Quản trị viên</div>
         </div>
         <button class="btn-logout" onclick="logout()" title="Đăng xuất">⏻</button>

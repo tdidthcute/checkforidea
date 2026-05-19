@@ -1,134 +1,90 @@
 /* ========================================
-   PAWCONNECT — admin.js
+   PAWLINK — admin.js
    Admin panel logic: login, CRUD, approve/reject
-   Version: Full CRUD for Pets, Merch, Fosters, Volunteers
 ======================================== */
 
 // ===== STATE =====
-const STORAGE_KEY = "pawlink_pets";
-const PENDING_KEY = "pawlink_pending";
-const MERCH_KEY = "pawlink_merch";
-const FOSTERS_KEY = "pawlink_fosters";
-const VOLUNTEERS_KEY = "pawlink_volunteers";
+// Shared storage key with main site
+const STORAGE_KEY = "pawgen_pets";
+const PENDING_KEY = "pawgen_pending";
 
-// Seed pending reports
+// Seed pending reports (simulated incoming reports from public users)
 const SEED_PENDING = [
-  { id: "RPT-001", submitTime: "2 phút trước", reporter: "Nguyễn Thị Lan", phone: "0901234567", name: "Kem", type: "cat", emoji: "🐱", age: "~1 tháng", gender: "Không rõ", location: "Cổng sau ĐH Bách Khoa, Q.10", condition: "urgent", desc: "Mèo con rất nhỏ, đang kêu liên tục, có vẻ bị bỏ rơi từ tối qua. Chân phải hơi khập khiễng.", tags: ["Mèo con", "Cần cứu gấp"], bgColor: "#FFF0E8", vaccinated: false, neutered: false, status: "pending", fosterDays: 0, costs: "0 VNĐ" },
-  { id: "RPT-002", submitTime: "15 phút trước", reporter: "Trần Văn Minh", phone: "0912345678", name: "Bí", type: "dog", emoji: "🐕", age: "~4 tháng", gender: "Đực", location: "Hẻm 12 Lê Văn Sỹ, Q.3", condition: "watch", desc: "Chó con lông vàng, có vẻ lạc. Đang ngồi trước cửa nhà tôi từ sáng, không thấy chủ tìm.", tags: ["Chó con", "Lạc chủ?"], bgColor: "#FFF8E0", vaccinated: false, neutered: false, status: "pending", fosterDays: 0, costs: "0 VNĐ" },
-  { id: "RPT-003", submitTime: "1 giờ trước", reporter: "Lê Phương Anh", phone: "0987654321", name: "Sữa", type: "cat", emoji: "😸", age: "~6 tháng", gender: "Cái", location: "Sân ký túc xá ĐHQG, Thủ Đức", condition: "safe", desc: "Mèo trắng sống lang thang trong KTX đã 2 tuần, sinh viên cho ăn nhưng không có ai nuôi hẳn. Sức khỏe tốt.", tags: ["Mèo trẻ", "Sức khỏe tốt"], bgColor: "#F0F8FF", vaccinated: false, neutered: false, status: "pending", fosterDays: 0, costs: "0 VNĐ" },
-  { id: "RPT-004", submitTime: "3 giờ trước", reporter: "Phạm Quốc Hùng", phone: "0978123456", name: "Than", type: "cat", emoji: "🐈‍⬛", age: "~3 năm", gender: "Đực", location: "Chợ Phạm Văn Hai, Tân Bình", condition: "urgent", desc: "Mèo đen bị thương ở mắt phải, có thể bị người đánh hoặc tai nạn. Đang trú dưới gầm xe máy, rất sợ người.", tags: ["Cần cứu gấp", "Bị thương"], bgColor: "#FFEAEA", vaccinated: false, neutered: false, status: "pending", fosterDays: 0, costs: "0 VNĐ" },
-  { id: "RPT-005", submitTime: "5 giờ trước", reporter: "Võ Thị Hoa", phone: "0965432187", name: "Cà Phê", type: "dog", emoji: "🐶", age: "~1 năm", gender: "Cái", location: "Công viên Hoàng Văn Thụ, Tân Bình", condition: "watch", desc: "Chó nâu vừa, lang thang công viên, có vẻ đã quen người. Gần đây thấy có bầu, lo cho sức khỏe mẹ và con.", tags: ["Đang mang thai?", "Cần theo dõi"], bgColor: "#E8FFF0", vaccinated: false, neutered: false, status: "pending", fosterDays: 0, costs: "0 VNĐ" }
+  {
+    id: "RPT-001", submitTime: "2 phút trước", reporter: "Nguyễn Thị Lan", phone: "0901234567",
+    name: "Kem", type: "cat", emoji: "🐱", age: "~1 tháng", gender: "Không rõ",
+    location: "Cổng sau ĐH Bách Khoa, Q.10", condition: "urgent",
+    desc: "Mèo con rất nhỏ, đang kêu liên tục, có vẻ bị bỏ rơi từ tối qua. Chân phải hơi khập khiễng.",
+    tags: ["Mèo con", "Cần cứu gấp"], bgColor: "#FFF0E8", vaccinated: false, neutered: false,
+    status: "pending", fosterDays: 0, costs: "0 VNĐ"
+  },
+  {
+    id: "RPT-002", submitTime: "15 phút trước", reporter: "Trần Văn Minh", phone: "0912345678",
+    name: "Bí", type: "dog", emoji: "🐕", age: "~4 tháng", gender: "Đực",
+    location: "Hẻm 12 Lê Văn Sỹ, Q.3", condition: "watch",
+    desc: "Chó con lông vàng, có vẻ lạc. Đang ngồi trước cửa nhà tôi từ sáng, không thấy chủ tìm.",
+    tags: ["Chó con", "Lạc chủ?"], bgColor: "#FFF8E0", vaccinated: false, neutered: false,
+    status: "pending", fosterDays: 0, costs: "0 VNĐ"
+  },
+  {
+    id: "RPT-003", submitTime: "1 giờ trước", reporter: "Lê Phương Anh", phone: "0987654321",
+    name: "Sữa", type: "cat", emoji: "😸", age: "~6 tháng", gender: "Cái",
+    location: "Sân ký túc xá ĐHQG, Thủ Đức", condition: "safe",
+    desc: "Mèo trắng sống lang thang trong KTX đã 2 tuần, sinh viên cho ăn nhưng không có ai nuôi hẳn. Sức khỏe tốt.",
+    tags: ["Mèo trẻ", "Sức khỏe tốt"], bgColor: "#F0F8FF", vaccinated: false, neutered: false,
+    status: "pending", fosterDays: 0, costs: "0 VNĐ"
+  },
+  {
+    id: "RPT-004", submitTime: "3 giờ trước", reporter: "Phạm Quốc Hùng", phone: "0978123456",
+    name: "Than", type: "cat", emoji: "🐈‍⬛", age: "~3 năm", gender: "Đực",
+    location: "Chợ Phạm Văn Hai, Tân Bình", condition: "urgent",
+    desc: "Mèo đen bị thương ở mắt phải, có thể bị người đánh hoặc tai nạn. Đang trú dưới gầm xe máy, rất sợ người.",
+    tags: ["Cần cứu gấp", "Bị thương"], bgColor: "#FFEAEA", vaccinated: false, neutered: false,
+    status: "pending", fosterDays: 0, costs: "0 VNĐ"
+  },
+  {
+    id: "RPT-005", submitTime: "5 giờ trước", reporter: "Võ Thị Hoa", phone: "0965432187",
+    name: "Cà Phê", type: "dog", emoji: "🐶", age: "~1 năm", gender: "Cái",
+    location: "Công viên Hoàng Văn Thụ, Tân Bình", condition: "watch",
+    desc: "Chó nâu vừa, lang thang công viên, có vẻ đã quen người. Gần đây thấy có bầu, lo cho sức khỏe mẹ và con.",
+    tags: ["Đang mang thai?", "Cần theo dõi"], bgColor: "#E8FFF0", vaccinated: false, neutered: false,
+    status: "pending", fosterDays: 0, costs: "0 VNĐ"
+  }
 ];
 
-// Seed merch data
-const DEFAULT_MERCH = [
-  { id: 1, name: "Áo Phông PAWCONNECT Classic", type: "apparel", emoji: "👕", price: 250000, desc: "Unisex, cotton 100%, in lưới cao cấp.", badge: "Bán chạy nhất", bgColor: "#E8F0FF", campus: "all" },
-  { id: 2, name: "Hoodie Bách Khoa Edition", type: "apparel", emoji: "🧥", price: 480000, desc: "Nỉ ấm, có in logo ĐH Bách Khoa.", badge: "Campus", bgColor: "#FFF0E8", campus: "bachkhoa" },
-  { id: 3, name: "Tote Bag Kinh Tế Edition", type: "accessory", emoji: "👜", price: 150000, desc: "Canvas dày, in logo ĐH Kinh tế.", badge: "Campus", bgColor: "#E8FFE8", campus: "kinhte" },
-  { id: 4, name: "Bộ Sticker PAWCONNECT Vol.1", type: "sticker", emoji: "🎨", price: 45000, desc: "12 sticker chống nước. Thiết kế chibi mèo chó cute.", badge: "45K", bgColor: "#FFF8E0", campus: "all" },
-  { id: 5, name: "Blindbox Mèo Bí Ẩn", type: "blindbox", emoji: "📦", price: 89000, desc: "Mở hộp bất ngờ! Sưu tầm 6 loại mèo khác nhau.", badge: "Hot", bgColor: "#FFE8E8", campus: "all" },
-  { id: 6, name: "Nón Sư Phạm Edition", type: "apparel", emoji: "🧢", price: 220000, desc: "Chất liệu chống nắng tốt. Thêu logo ĐH Sư Phạm.", badge: "Campus", bgColor: "#E8F5FF", campus: "supham" },
-  { id: 7, name: "Keychain KHTN Edition", type: "accessory", emoji: "🔑", price: 65000, desc: "Hợp kim kẽm mạ vàng. Logo ĐH KHTN.", badge: "Campus", bgColor: "#F5E8FF", campus: "khhtn" },
-  { id: 8, name: "Blindbox Chó Siêu Quậy", type: "blindbox", emoji: "📦", price: 89000, desc: "Sưu tầm 6 loại chó cute.", badge: "New", bgColor: "#E8FFF5", campus: "all" },
-  { id: 9, name: "Ốp Điện Thoại Bách Khoa", type: "accessory", emoji: "📱", price: 120000, desc: "Ốp silicon, in hình trường Bách Khoa.", badge: "Campus", bgColor: "#FFF0F5", campus: "bachkhoa" }
-];
-
-// Seed fosters data
-const DEFAULT_FOSTERS = [
-  { id: 1, name: "Nguyễn Minh Anh", area: "Quận 10", type: "Mèo", rating: 5, current: 1, max: 2, phone: "0901234567", email: "minhanh@gmail.com", avatar: "🌸", joined: "15/01/2025", status: "active" },
-  { id: 2, name: "Trần Hoàng Hùng", area: "Thủ Đức", type: "Chó + Mèo", rating: 5, current: 0, max: 1, phone: "0912345678", email: "hoanghung@gmail.com", avatar: "🌟", joined: "22/01/2025", status: "active" },
-  { id: 3, name: "Lê Phương Linh", area: "Quận 3", type: "Mèo", rating: 4, current: 2, max: 2, phone: "0987654321", email: "phuonglinh@gmail.com", avatar: "🎀", joined: "30/01/2025", status: "busy" },
-  { id: 4, name: "Phạm Văn Khoa", area: "Bình Thạnh", type: "Chó", rating: 5, current: 1, max: 3, phone: "0978123456", email: "vankhoa@gmail.com", avatar: "⭐", joined: "05/02/2025", status: "active" },
-  { id: 5, name: "Võ Thị Mai", area: "Quận 7", type: "Mèo", rating: 4, current: 0, max: 2, phone: "0965432187", email: "thimai@gmail.com", avatar: "🌺", joined: "12/02/2025", status: "inactive" }
-];
-
-// Seed volunteers data
-const DEFAULT_VOLUNTEERS = [
-  { id: 1, name: "Trần Minh Khoa", role: "Rescuer", area: "Q.1, Q.3", phone: "0901111222", email: "minhkhoa@gmail.com", status: "active", missions: 12, joined: "10/01/2025", avatar: "🚑", skills: ["Bắt chó mèo", "Sơ cứu"] },
-  { id: 2, name: "Nguyễn Thu Hà", role: "Foster Parent", area: "Thủ Đức", phone: "0912222333", email: "thuha@gmail.com", status: "active", missions: 8, joined: "18/01/2025", avatar: "🏠", skills: ["Chăm sóc thú cưng"] },
-  { id: 3, name: "Lê Văn Dũng", role: "Coordinator", area: "Online", phone: "0923333444", email: "vandung@gmail.com", status: "active", missions: 24, joined: "05/01/2025", avatar: "💻", skills: ["Điều phối", "Quản lý case"] },
-  { id: 4, name: "Phạm Bích Ngọc", role: "Pet Photographer", area: "Q.7, Q.5", phone: "0934444555", email: "bichngoc@gmail.com", status: "inactive", missions: 5, joined: "20/02/2025", avatar: "📸", skills: ["Chụp ảnh pet"] },
-  { id: 5, name: "Vũ Hoàng Nam", role: "Rescuer", area: "Bình Thạnh", phone: "0945555666", email: "hoangnam@gmail.com", status: "active", missions: 17, joined: "14/01/2025", avatar: "🚑", skills: ["Bắt chó mèo", "Vận chuyển"] }
-];
-
-// ===== GET/SET FUNCTIONS =====
-function getApproved() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; } }
+// Get or initialize state
+function getApproved() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; }
+}
 function getPending() {
   try {
     const stored = JSON.parse(localStorage.getItem(PENDING_KEY) || "null");
-    if (!stored) { localStorage.setItem(PENDING_KEY, JSON.stringify(SEED_PENDING)); return SEED_PENDING; }
+    if (!stored) {
+      localStorage.setItem(PENDING_KEY, JSON.stringify(SEED_PENDING));
+      return SEED_PENDING;
+    }
     return stored;
   } catch { return SEED_PENDING; }
 }
-function getMerch() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(MERCH_KEY) || "null");
-    if (!stored) { localStorage.setItem(MERCH_KEY, JSON.stringify(DEFAULT_MERCH)); return DEFAULT_MERCH; }
-    return stored;
-  } catch { return DEFAULT_MERCH; }
-}
-function getStoredFosters() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(FOSTERS_KEY) || "null");
-    if (!stored) { localStorage.setItem(FOSTERS_KEY, JSON.stringify(DEFAULT_FOSTERS)); return DEFAULT_FOSTERS; }
-    return stored;
-  } catch { return DEFAULT_FOSTERS; }
-}
-function getStoredVolunteers() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(VOLUNTEERS_KEY) || "null");
-    if (!stored) { localStorage.setItem(VOLUNTEERS_KEY, JSON.stringify(DEFAULT_VOLUNTEERS)); return DEFAULT_VOLUNTEERS; }
-    return stored;
-  } catch { return DEFAULT_VOLUNTEERS; }
-}
-
 function savePending(data) { localStorage.setItem(PENDING_KEY, JSON.stringify(data)); }
 function saveApproved(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-function saveMerch(data) { localStorage.setItem(MERCH_KEY, JSON.stringify(data)); }
-function saveFosters(data) { localStorage.setItem(FOSTERS_KEY, JSON.stringify(data)); }
-function saveVolunteers(data) { localStorage.setItem(VOLUNTEERS_KEY, JSON.stringify(data)); }
 
 let currentPage = "overview";
 let pendingList = [];
 let approvedList = [];
-let merchList = [];
 let selectedEmoji = "🐱";
 let currentTags = [];
 let editingId = null;
-let editingMerchId = null;
-let editingFosterId = null;
-let editingVolunteerId = null;
-
-// ===== SESSION CHECK =====
-// Kiểm tra session khi trang load. Nếu không có session hợp lệ → show login
-function checkSession() {
-  try {
-    const sess = JSON.parse(localStorage.getItem("pawlink_session") || "null");
-    if (sess && sess.role === "admin") {
-      // Đã login → ẩn login screen (nó đã display:none), show app (đã display:flex)
-      return true;
-    }
-  } catch {}
-  // Chưa login → show login screen, ẩn app
-  document.getElementById("loginScreen").style.display = "flex";
-  document.getElementById("adminApp").style.display = "none";
-  return false;
-}
 
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
-  const alreadyLoggedIn = checkSession();
-
   initLogin();
   initSidebar();
   initModal();
 
   pendingList = getPending();
   approvedList = getApproved();
-  merchList = getMerch();
   updatePendingBadge();
-
-  if (alreadyLoggedIn) navigateTo("overview");
 });
 
 // ===== LOGIN =====
@@ -138,9 +94,7 @@ function initLogin() {
     const user = document.getElementById("loginUser").value.trim();
     const pass = document.getElementById("loginPass").value.trim();
 
-    if (user === "admin" && pass === "pawlink123") {
-      // Lưu session để nhất quán với login.html
-      localStorage.setItem("pawlink_session", JSON.stringify({ name: "Admin PawLink", role: "admin", email: "admin@pawlink.vn" }));
+    if (user === "admin" && pass === "pawgen123") {
       document.getElementById("loginScreen").style.display = "none";
       document.getElementById("adminApp").style.display = "flex";
       navigateTo("overview");
@@ -152,7 +106,6 @@ function initLogin() {
 }
 
 function logout() {
-  localStorage.removeItem("pawlink_session"); // xóa session từ login.html
   document.getElementById("adminApp").style.display = "none";
   document.getElementById("loginScreen").style.display = "flex";
   document.getElementById("loginUser").value = "";
@@ -165,6 +118,7 @@ function initSidebar() {
     link.addEventListener("click", () => {
       const page = link.dataset.page;
       if (page) navigateTo(page);
+      // close mobile sidebar
       document.getElementById("sidebar").classList.remove("mobile-open");
     });
   });
@@ -185,10 +139,12 @@ function initSidebar() {
 function navigateTo(page) {
   currentPage = page;
 
+  // Update active link
   document.querySelectorAll(".sidebar-link").forEach(l => {
     l.classList.toggle("active", l.dataset.page === page);
   });
 
+  // Update topbar title
   const titles = {
     overview: "Dashboard Tổng quan",
     pending: "Duyệt báo cáo cứu hộ",
@@ -196,15 +152,14 @@ function navigateTo(page) {
     rejected: "Báo cáo đã từ chối",
     add: "Thêm thú cưng mới",
     fosters: "Danh sách người nuôi tạm",
-    volunteers: "Danh sách tình nguyện viên",
-    merch: "Quản lý Merch"
+    volunteers: "Danh sách tình nguyện viên"
   };
   document.getElementById("topbarTitle").textContent = titles[page] || page;
 
+  // Render page
   const content = document.getElementById("pageContent");
   pendingList = getPending();
   approvedList = getApproved();
-  merchList = getMerch();
 
   switch (page) {
     case "overview": renderOverview(); break;
@@ -214,7 +169,6 @@ function navigateTo(page) {
     case "add": renderAddForm(); break;
     case "fosters": renderFosters(); break;
     case "volunteers": renderVolunteers(); break;
-    case "merch": renderMerchManagement(); break;
   }
 }
 
@@ -365,9 +319,23 @@ function filterPendingCondition(val) {
   pendingList = getPending();
   let items = pendingList.filter(p => p.status === "pending");
   if (val) items = items.filter(p => p.condition === val);
+  document.getElementById("pageContent").querySelector(".tbl")?.closest("div").outerHTML;
+
   const content = document.getElementById("pageContent");
   const tableWrap = content.querySelector("[style*='overflow-x']");
   if (tableWrap) tableWrap.outerHTML = `<div style="overflow-x:auto">${renderPendingTable(items, false)}</div>`;
+  navigateTo_soft("pending", val);
+}
+
+function navigateTo_soft(page, filter) {
+  pendingList = getPending();
+  let items = pendingList.filter(p => p.status === "pending");
+  if (filter) items = items.filter(p => p.condition === filter);
+  const wrap = document.getElementById("pageContent").querySelector(".table-card");
+  if (wrap) {
+    const tbl = wrap.querySelector("[style*='overflow-x']");
+    if (tbl) tbl.innerHTML = renderPendingTable(items, false);
+  }
 }
 
 // ===== APPROVE =====
@@ -381,6 +349,7 @@ function approvePet(id) {
   const pet = { ...pendingList[idx] };
   pet.status = "approved";
   pet.approvedTime = new Date().toLocaleString("vi-VN");
+  // Add to approved list with unique id
   pet.id = Date.now();
   pet.fosterDays = 0;
 
@@ -549,8 +518,7 @@ function renderApprovedTable(items) {
               <td>
                 <div class="action-btns">
                   <button class="btn-view" onclick="viewPet('${pet.id}', 'approved')">👁 Xem</button>
-                  <button class="btn-edit" onclick="editPet(${pet.id})">✏️ Sửa</button>
-                  <button class="btn-delete" onclick="removePet(${pet.id})" title="Gỡ khỏi danh sách">🗑 Xóa</button>
+                  <button class="btn-delete" onclick="removePet(${pet.id})" title="Gỡ khỏi danh sách">🗑</button>
                 </div>
               </td>
             </tr>
@@ -559,31 +527,6 @@ function renderApprovedTable(items) {
       </table>
     </div>
   `;
-}
-
-function editPet(id) {
-  const pet = getApproved().find(p => p.id === id);
-  if (!pet) return;
-  
-  renderAddForm({
-    id: pet.id,
-    name: pet.name,
-    type: pet.type,
-    gender: pet.gender,
-    age: pet.age,
-    location: pet.location,
-    condition: pet.condition,
-    desc: pet.desc,
-    vaccinated: pet.vaccinated,
-    neutered: pet.neutered,
-    emoji: pet.emoji,
-    bgColorHex: pet.bgColor,
-    tags: pet.tags,
-    costs: pet.costs,
-    fosterDays: pet.fosterDays
-  });
-  
-  navigateTo("add");
 }
 
 function removePet(id) {
@@ -617,7 +560,7 @@ function renderRejected() {
                       <div class="pet-emoji-sm" style="background:${pet.bgColor}">${pet.emoji}</div>
                       <div><div class="pet-cell-name">${pet.name}</div><div class="pet-cell-sub">${pet.location}</div></div>
                     </div>
-                   </td>
+                  </td>
                   <td>${pet.reporter}<br/><span style="font-size:0.72rem;color:var(--mid-gray)">${pet.phone}</span></td>
                   <td style="font-size:0.82rem;color:var(--red);max-width:200px">${pet.rejectReason || "—"}</td>
                   <td style="font-size:0.78rem;color:var(--mid-gray)">${pet.rejectedTime || "—"}</td>
@@ -754,21 +697,6 @@ function renderAddForm(prefill = {}) {
             <label>Số ngày nuôi tạm</label>
             <input type="number" id="petFosterDays" placeholder="0" value="${prefill.fosterDays || 0}" min="0"/>
           </div>
-          <div class="fgroup form-full">
-            <label>🔗 Link QR Code (tùy chỉnh)</label>
-            <div style="display:flex;gap:0.75rem;align-items:flex-start;flex-wrap:wrap;">
-              <input type="text" id="petQrUrl" placeholder="VD: https://pawlink.vn/pet/mochi hoặc link Zalo, Facebook..." value="${prefill.qrUrl || ''}" style="flex:1;min-width:200px" oninput="previewAdminQr(this.value)"/>
-              <button type="button" class="btn-view" style="flex-shrink:0;padding:0.6rem 1rem" onclick="previewAdminQr(document.getElementById('petQrUrl').value)">🔍 Preview</button>
-            </div>
-            <div id="qrPreviewWrap" style="margin-top:0.75rem;display:none;align-items:center;gap:1rem;background:var(--cream);border-radius:var(--radius-sm);padding:0.75rem;flex-wrap:wrap;">
-              <canvas id="qrPreviewCanvas" width="120" height="120"></canvas>
-              <div style="font-size:0.78rem;color:var(--mid-gray);">
-                <div style="font-weight:700;margin-bottom:0.25rem;">✅ QR hợp lệ</div>
-                <div id="qrPreviewUrl" style="word-break:break-all;max-width:250px;"></div>
-                <button type="button" id="qrDownloadBtn" style="margin-top:0.5rem;padding:0.3rem 0.75rem;background:var(--forest);color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;">⬇️ Tải QR về</button>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div class="form-actions">
@@ -839,27 +767,16 @@ function submitAddPet() {
   const bgColorHex = document.getElementById("petBgColor").value;
   const costs = document.getElementById("petCosts").value.trim() || "0 VNĐ";
   const fosterDays = parseInt(document.getElementById("petFosterDays").value) || 0;
-  const qrUrl = (document.getElementById("petQrUrl")?.value || "").trim();
 
   approvedList = getApproved();
 
   if (editingId) {
     const idx = approvedList.findIndex(p => p.id === editingId);
     if (idx !== -1) {
-      approvedList[idx] = { 
-        ...approvedList[idx], 
-        name, type, gender, age, location, condition, desc, 
-        vaccinated, neutered, 
-        bgColor: bgColorHex, 
-        costs, fosterDays, 
-        emoji: selectedEmoji, 
-        tags: [...currentTags],
-        qrUrl
-      };
+      approvedList[idx] = { ...approvedList[idx], name, type, gender, age, location, condition, desc, vaccinated, neutered, bgColor: bgColorHex, bgColorHex, costs, fosterDays, emoji: selectedEmoji, tags: [...currentTags] };
     }
     saveApproved(approvedList);
     showToast(`✏️ Đã cập nhật thông tin "${name}"!`);
-    editingId = null;
   } else {
     const newPet = {
       id: Date.now(),
@@ -867,9 +784,9 @@ function submitAddPet() {
       vaccinated, neutered,
       emoji: selectedEmoji,
       bgColor: bgColorHex,
+      bgColorHex,
       tags: [...currentTags],
       costs, fosterDays,
-      qrUrl,
       status: "approved",
       approvedTime: new Date().toLocaleString("vi-VN"),
       reporter: "Admin",
@@ -879,326 +796,60 @@ function submitAddPet() {
     showToast(`✅ Đã thêm "${name}" vào danh sách nhận nuôi!`);
   }
 
+  editingId = null;
   navigateTo("approved");
 }
 
-
-// ===== QR CODE HELPERS (Admin form) =====
-function previewAdminQr(url) {
-  const wrap = document.getElementById("qrPreviewWrap");
-  const urlEl = document.getElementById("qrPreviewUrl");
-  const canvas = document.getElementById("qrPreviewCanvas");
-  const dlBtn = document.getElementById("qrDownloadBtn");
-  if (!wrap || !canvas) return;
-  if (!url || url.trim() === "") { wrap.style.display = "none"; return; }
-  wrap.style.display = "flex";
-  urlEl.textContent = url;
-  // Load QRious if not loaded
-  if (typeof QRious === "undefined") {
-    const s = document.createElement("script");
-    s.src = "https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js";
-    s.onload = () => { new QRious({ element: canvas, value: url, size: 120, backgroundAlpha: 1 }); };
-    document.head.appendChild(s);
-  } else {
-    new QRious({ element: canvas, value: url, size: 120, backgroundAlpha: 1 });
-  }
-  if (dlBtn) {
-    dlBtn.onclick = () => {
-      const link = document.createElement("a");
-      link.download = "qr-pet.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    };
-  }
-}
-
-// ===== MERCH MANAGEMENT =====
-function renderMerchManagement() {
-  merchList = getMerch();
-  
-  document.getElementById("pageContent").innerHTML = `
-    <div class="table-card">
-      <div class="table-header">
-        <span class="table-title">🛍️ Quản lý sản phẩm Merch (${merchList.length})</span>
-        <button class="btn-submit" onclick="showAddMerchForm()">+ Thêm sản phẩm</button>
-      </div>
-      <div style="overflow-x:auto">
-        <table class="tbl">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Sản phẩm</th>
-              <th>Tên</th>
-              <th>Giá</th>
-              <th>Loại</th>
-              <th>Campus</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody id="merchTableBody">
-            ${renderMerchTable(merchList)}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `;
-}
-
-function renderMerchTable(items) {
-  if (items.length === 0) {
-    return `<tr><td colspan="7" style="text-align:center;padding:2rem">Chưa có sản phẩm nào</td></tr>`;
-  }
-  return items.map(item => `
-    <tr>
-      <td style="font-family:var(--font-mono);font-size:0.8rem">${item.id}</td>
-      <td><span style="font-size:1.5rem">${item.emoji}</span></td>
-      <td style="font-weight:600">${item.name}</td>
-      <td style="font-family:var(--font-mono);color:var(--terracotta)">${item.price.toLocaleString()}₫</div></td>
-      <td><span class="sbadge sbadge-approved">${item.type}</span></td>
-      <td><span class="sbadge sbadge-watch">${item.campus === 'all' ? 'Tất cả' : item.campus}</span></td>
-      <td>
-        <div class="action-btns">
-          <button class="btn-edit" onclick="editMerch(${item.id})">✏️ Sửa</button>
-          <button class="btn-delete" onclick="deleteMerch(${item.id})">🗑 Xóa</button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function showAddMerchForm() {
-  editingMerchId = null;
-  document.getElementById("pageContent").innerHTML = `
-    <div class="add-form-card">
-      <h2 style="font-family:var(--font-display);font-size:1.5rem;margin-bottom:1.75rem">
-        ➕ Thêm sản phẩm Merch mới
-      </h2>
-      <form id="addMerchForm">
-        <div class="form-grid">
-          <div class="fgroup">
-            <label>Tên sản phẩm *</label>
-            <input type="text" id="merchName" placeholder="VD: Áo Phông PAWCONNECT" required/>
-          </div>
-          <div class="fgroup">
-            <label>Emoji *</label>
-            <input type="text" id="merchEmoji" placeholder="VD: 👕, 🧥, 👜" value="👕" required/>
-          </div>
-          <div class="fgroup">
-            <label>Giá (VNĐ) *</label>
-            <input type="number" id="merchPrice" placeholder="250000" required/>
-          </div>
-          <div class="fgroup">
-            <label>Loại</label>
-            <select id="merchType">
-              <option value="apparel">👕 Áo quần</option>
-              <option value="accessory">🎒 Phụ kiện</option>
-              <option value="sticker">🎨 Sticker</option>
-              <option value="blindbox">📦 Blindbox</option>
-            </select>
-          </div>
-          <div class="fgroup">
-            <label>Campus Edition</label>
-            <select id="merchCampus">
-              <option value="all">🎓 Tất cả trường</option>
-              <option value="bachkhoa">🏫 ĐH Bách Khoa</option>
-              <option value="kinhte">📈 ĐH Kinh tế</option>
-              <option value="supham">📚 ĐH Sư Phạm</option>
-              <option value="khhtn">🔬 ĐH KHTN</option>
-            </select>
-          </div>
-          <div class="fgroup">
-            <label>Badge (nổi bật)</label>
-            <input type="text" id="merchBadge" placeholder="VD: Bán chạy nhất, Campus, Hot... (để trống nếu không có)"/>
-          </div>
-          <div class="fgroup form-full">
-            <label>Mô tả *</label>
-            <textarea id="merchDesc" rows="3" placeholder="Mô tả sản phẩm..." required></textarea>
-          </div>
-          <div class="fgroup">
-            <label>Màu nền</label>
-            <input type="color" id="merchBgColor" value="#E8F0FF" style="height:42px;cursor:pointer"/>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-submit">💾 Lưu sản phẩm</button>
-          <button type="button" class="btn-reset" onclick="cancelMerchForm()">❌ Hủy</button>
-        </div>
-      </form>
-    </div>
-  `;
-  
-  document.getElementById("addMerchForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    submitAddMerch();
-  });
-}
-
-function submitAddMerch() {
-  const name = document.getElementById("merchName").value.trim();
-  const emoji = document.getElementById("merchEmoji").value.trim();
-  const price = parseInt(document.getElementById("merchPrice").value);
-  const type = document.getElementById("merchType").value;
-  const campus = document.getElementById("merchCampus").value;
-  const badge = document.getElementById("merchBadge").value.trim();
-  const desc = document.getElementById("merchDesc").value.trim();
-  const bgColor = document.getElementById("merchBgColor").value;
-  
-  if (!name || !emoji || !price || !desc) {
-    showToast("⚠️ Vui lòng điền đầy đủ thông tin!");
-    return;
-  }
-  
-  merchList = getMerch();
-  const newId = Math.max(...merchList.map(m => m.id), 0) + 1;
-  
-  const newMerch = {
-    id: newId,
-    name, emoji, price, type, campus, desc, bgColor,
-    badge: badge || null
-  };
-  
-  merchList.push(newMerch);
-  saveMerch(merchList);
-  showToast(`✅ Đã thêm sản phẩm "${name}"!`);
-  navigateTo("merch");
-}
-
-function editMerch(id) {
-  merchList = getMerch();
-  const item = merchList.find(m => m.id === id);
-  if (!item) return;
-  
-  editingMerchId = id;
-  
-  document.getElementById("pageContent").innerHTML = `
-    <div class="add-form-card">
-      <h2 style="font-family:var(--font-display);font-size:1.5rem;margin-bottom:1.75rem">
-        ✏️ Chỉnh sửa sản phẩm: ${item.name}
-      </h2>
-      <form id="editMerchForm">
-        <div class="form-grid">
-          <div class="fgroup">
-            <label>Tên sản phẩm *</label>
-            <input type="text" id="merchName" value="${item.name}" required/>
-          </div>
-          <div class="fgroup">
-            <label>Emoji *</label>
-            <input type="text" id="merchEmoji" value="${item.emoji}" required/>
-          </div>
-          <div class="fgroup">
-            <label>Giá (VNĐ) *</label>
-            <input type="number" id="merchPrice" value="${item.price}" required/>
-          </div>
-          <div class="fgroup">
-            <label>Loại</label>
-            <select id="merchType">
-              <option value="apparel" ${item.type === 'apparel' ? 'selected' : ''}>👕 Áo quần</option>
-              <option value="accessory" ${item.type === 'accessory' ? 'selected' : ''}>🎒 Phụ kiện</option>
-              <option value="sticker" ${item.type === 'sticker' ? 'selected' : ''}>🎨 Sticker</option>
-              <option value="blindbox" ${item.type === 'blindbox' ? 'selected' : ''}>📦 Blindbox</option>
-            </select>
-          </div>
-          <div class="fgroup">
-            <label>Campus Edition</label>
-            <select id="merchCampus">
-              <option value="all" ${item.campus === 'all' ? 'selected' : ''}>🎓 Tất cả trường</option>
-              <option value="bachkhoa" ${item.campus === 'bachkhoa' ? 'selected' : ''}>🏫 ĐH Bách Khoa</option>
-              <option value="kinhte" ${item.campus === 'kinhte' ? 'selected' : ''}>📈 ĐH Kinh tế</option>
-              <option value="supham" ${item.campus === 'supham' ? 'selected' : ''}>📚 ĐH Sư Phạm</option>
-              <option value="khhtn" ${item.campus === 'khhtn' ? 'selected' : ''}>🔬 ĐH KHTN</option>
-            </select>
-          </div>
-          <div class="fgroup">
-            <label>Badge (nổi bật)</label>
-            <input type="text" id="merchBadge" value="${item.badge || ''}" placeholder="VD: Bán chạy nhất..."/>
-          </div>
-          <div class="fgroup form-full">
-            <label>Mô tả *</label>
-            <textarea id="merchDesc" rows="3" required>${item.desc}</textarea>
-          </div>
-          <div class="fgroup">
-            <label>Màu nền</label>
-            <input type="color" id="merchBgColor" value="${item.bgColor}" style="height:42px;cursor:pointer"/>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-submit">💾 Lưu thay đổi</button>
-          <button type="button" class="btn-reset" onclick="cancelMerchForm()">❌ Hủy</button>
-        </div>
-      </form>
-    </div>
-  `;
-  
-  document.getElementById("editMerchForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    updateMerch();
-  });
-}
-
-function updateMerch() {
-  const name = document.getElementById("merchName").value.trim();
-  const emoji = document.getElementById("merchEmoji").value.trim();
-  const price = parseInt(document.getElementById("merchPrice").value);
-  const type = document.getElementById("merchType").value;
-  const campus = document.getElementById("merchCampus").value;
-  const badge = document.getElementById("merchBadge").value.trim();
-  const desc = document.getElementById("merchDesc").value.trim();
-  const bgColor = document.getElementById("merchBgColor").value;
-  
-  if (!name || !emoji || !price || !desc) {
-    showToast("⚠️ Vui lòng điền đầy đủ thông tin!");
-    return;
-  }
-  
-  merchList = getMerch();
-  const idx = merchList.findIndex(m => m.id === editingMerchId);
-  if (idx !== -1) {
-    merchList[idx] = { ...merchList[idx], name, emoji, price, type, campus, desc, bgColor, badge: badge || null };
-    saveMerch(merchList);
-    showToast(`✏️ Đã cập nhật sản phẩm "${name}"!`);
-  }
-  
-  navigateTo("merch");
-}
-
-function deleteMerch(id) {
-  if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
-  merchList = getMerch().filter(m => m.id !== id);
-  saveMerch(merchList);
-  showToast("🗑 Đã xóa sản phẩm!");
-  renderMerchManagement();
-}
-
-function cancelMerchForm() {
-  navigateTo("merch");
-}
-
-// ===== FOSTERS CRUD (THÊM MỚI - CÓ NÚT SỬA) =====
+// ===== FOSTERS =====
 function renderFosters() {
-  const fosters = getStoredFosters();
+  const fosters = [
+    { name: "Nguyễn Minh Anh", area: "Quận 10", type: "Mèo", rating: 5, current: 1, max: 2, phone: "0901234567", avatar: "🌸", joined: "15/01/2025" },
+    { name: "Trần Hoàng Hùng", area: "Thủ Đức", type: "Chó + Mèo", rating: 5, current: 0, max: 1, phone: "0912345678", avatar: "🌟", joined: "22/01/2025" },
+    { name: "Lê Phương Linh", area: "Quận 3", type: "Mèo", rating: 4, current: 2, max: 2, phone: "0987654321", avatar: "🎀", joined: "30/01/2025" },
+    { name: "Phạm Văn Khoa", area: "Bình Thạnh", type: "Chó", rating: 5, current: 1, max: 3, phone: "0978123456", avatar: "⭐", joined: "05/02/2025" },
+    { name: "Võ Thị Mai", area: "Quận 7", type: "Mèo", rating: 4, current: 0, max: 2, phone: "0965432187", avatar: "🌺", joined: "12/02/2025" },
+  ];
+
   document.getElementById("pageContent").innerHTML = `
     <div class="table-card">
       <div class="table-header">
         <span class="table-title">🏠 Danh sách người nuôi tạm (${fosters.length})</span>
-        <button class="btn-submit" onclick="showAddFosterForm()">+ Thêm mới</button>
+        <button class="btn-submit" style="padding:0.4rem 1rem;font-size:0.8rem" onclick="showToast('📱 Tính năng thêm foster đang phát triển!')">+ Thêm mới</button>
       </div>
       <div style="overflow-x:auto">
         <table class="tbl">
-          <thead>
-            <tr><th>Avatar</th><th>Tên</th><th>Khu vực</th><th>Loại nuôi</th><th>Sức chứa</th><th>Đánh giá</th><th>Trạng thái</th><th>Ngày tham gia</th><th>Hành động</th></tr>
-          </thead>
+          <thead><tr><th>Tên</th><th>Khu vực</th><th>Loại nuôi</th><th>Sức chứa</th><th>Đánh giá</th><th>Ngày tham gia</th><th>Hành động</th></tr></thead>
           <tbody>
             ${fosters.map(f => `
               <tr>
-                <td style="font-size:1.5rem">${f.avatar}</td>
-                <td><strong>${f.name}</strong><br><small>${f.phone}</small></td>
+                <td>
+                  <div class="pet-cell">
+                    <div style="font-size:1.5rem">${f.avatar}</div>
+                    <div>
+                      <div class="pet-cell-name">${f.name}</div>
+                      <div class="pet-cell-sub">${f.phone}</div>
+                    </div>
+                  </div>
+                </td>
                 <td>${f.area}</td>
                 <td>${f.type}</td>
-                <td>${f.current}/${f.max}</td>
-                <td>⭐ ${f.rating}/5</td>
-                <td><span class="sbadge ${f.status === 'active' ? 'sbadge-approved' : f.status === 'busy' ? 'sbadge-watch' : 'sbadge-rejected'}">${f.status === 'active' ? '🟢 Hoạt động' : f.status === 'busy' ? '🟡 Đã có thú' : '🔴 Tạm dừng'}</span></td>
-                <td>${f.joined}</td>
-                <td><div class="action-btns"><button class="btn-edit" onclick="editFoster(${f.id})">✏️ Sửa</button><button class="btn-delete" onclick="deleteFoster(${f.id})">🗑 Xóa</button></div></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:0.5rem">
+                    <div style="display:flex;gap:2px">
+                      ${Array.from({length:f.max}).map((_,i) => `<div style="width:16px;height:16px;border-radius:50%;background:${i<f.current?"var(--terracotta)":"var(--light-gray)"}"></div>`).join("")}
+                    </div>
+                    <span style="font-size:0.78rem;color:var(--mid-gray)">${f.current}/${f.max}</span>
+                    ${f.current < f.max ? '<span class="sbadge sbadge-approved" style="font-size:0.65rem">Còn chỗ</span>' : '<span class="sbadge sbadge-rejected" style="font-size:0.65rem">Đầy</span>'}
+                  </div>
+                </td>
+                <td><span style="font-family:var(--font-mono);font-size:0.82rem;color:var(--gold)">⭐ ${f.rating}/5</span></td>
+                <td style="font-size:0.78rem;color:var(--mid-gray)">${f.joined}</td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-view" onclick="showToast('📋 Xem hồ sơ ${f.name}')">Xem</button>
+                    <button class="btn-edit" onclick="showToast('📞 Liên hệ ${f.phone}')">Liên hệ</button>
+                  </div>
+                </td>
               </tr>
             `).join("")}
           </tbody>
@@ -1208,122 +859,40 @@ function renderFosters() {
   `;
 }
 
-function showAddFosterForm() {
-  editingFosterId = null;
-  document.getElementById("pageContent").innerHTML = `
-    <div class="add-form-card">
-      <h2>➕ Thêm người nuôi tạm mới</h2>
-      <form id="fosterFormModal">
-        <div class="form-grid">
-          <div class="fgroup"><label>Họ tên *</label><input type="text" id="fosterName" required/></div>
-          <div class="fgroup"><label>Avatar (emoji)</label><input type="text" id="fosterAvatar" value="🐾"/></div>
-          <div class="fgroup"><label>Số điện thoại *</label><input type="tel" id="fosterPhone" required/></div>
-          <div class="fgroup"><label>Email</label><input type="email" id="fosterEmail"/></div>
-          <div class="fgroup"><label>Khu vực *</label><input type="text" id="fosterArea" required/></div>
-          <div class="fgroup"><label>Loại nuôi</label><select id="fosterType"><option>Mèo</option><option>Chó</option><option>Chó + Mèo</option></select></div>
-          <div class="fgroup"><label>Số lượng tối đa</label><input type="number" id="fosterMax" value="2" min="1"/></div>
-          <div class="fgroup"><label>Số lượng hiện tại</label><input type="number" id="fosterCurrent" value="0" min="0"/></div>
-          <div class="fgroup"><label>Đánh giá (1-5)</label><input type="number" id="fosterRating" value="5" min="1" max="5"/></div>
-          <div class="fgroup"><label>Trạng thái</label><select id="fosterStatus"><option value="active">🟢 Đang hoạt động</option><option value="busy">🟡 Đã có thú</option><option value="inactive">🔴 Tạm dừng</option></select></div>
-          <div class="fgroup"><label>Ngày tham gia</label><input type="date" id="fosterJoined" value="${new Date().toISOString().split('T')[0]}"/></div>
-        </div>
-        <div class="form-actions"><button type="submit" class="btn-submit">💾 Lưu</button><button type="button" class="btn-reset" onclick="renderFosters()">❌ Hủy</button></div>
-      </form>
-    </div>
-  `;
-  document.getElementById("fosterFormModal").addEventListener("submit", (e) => { e.preventDefault(); submitAddFoster(); });
-}
-
-function submitAddFoster() {
-  const fosters = getStoredFosters();
-  const newId = Math.max(...fosters.map(f => f.id), 0) + 1;
-  const newFoster = {
-    id: newId, name: document.getElementById("fosterName").value, avatar: document.getElementById("fosterAvatar").value,
-    phone: document.getElementById("fosterPhone").value, email: document.getElementById("fosterEmail").value,
-    area: document.getElementById("fosterArea").value, type: document.getElementById("fosterType").value,
-    max: parseInt(document.getElementById("fosterMax").value), current: parseInt(document.getElementById("fosterCurrent").value),
-    rating: parseInt(document.getElementById("fosterRating").value), status: document.getElementById("fosterStatus").value,
-    joined: document.getElementById("fosterJoined").value,
-  };
-  fosters.push(newFoster);
-  saveFosters(fosters);
-  showToast(`✅ Đã thêm "${newFoster.name}"!`);
-  renderFosters();
-}
-
-function editFoster(id) {
-  const fosters = getStoredFosters();
-  const foster = fosters.find(f => f.id === id);
-  if (!foster) return;
-  editingFosterId = id;
-  document.getElementById("pageContent").innerHTML = `
-    <div class="add-form-card">
-      <h2>✏️ Chỉnh sửa: ${foster.name}</h2>
-      <form id="fosterFormModal">
-        <div class="form-grid">
-          <div class="fgroup"><label>Họ tên</label><input type="text" id="fosterName" value="${foster.name}" required/></div>
-          <div class="fgroup"><label>Avatar</label><input type="text" id="fosterAvatar" value="${foster.avatar}"/></div>
-          <div class="fgroup"><label>SĐT</label><input type="tel" id="fosterPhone" value="${foster.phone}" required/></div>
-          <div class="fgroup"><label>Email</label><input type="email" id="fosterEmail" value="${foster.email || ''}"/></div>
-          <div class="fgroup"><label>Khu vực</label><input type="text" id="fosterArea" value="${foster.area}" required/></div>
-          <div class="fgroup"><label>Loại nuôi</label><select id="fosterType"><option ${foster.type === 'Mèo' ? 'selected' : ''}>Mèo</option><option ${foster.type === 'Chó' ? 'selected' : ''}>Chó</option><option ${foster.type === 'Chó + Mèo' ? 'selected' : ''}>Chó + Mèo</option></select></div>
-          <div class="fgroup"><label>Số lượng tối đa</label><input type="number" id="fosterMax" value="${foster.max}" min="1"/></div>
-          <div class="fgroup"><label>Số lượng hiện tại</label><input type="number" id="fosterCurrent" value="${foster.current}" min="0"/></div>
-          <div class="fgroup"><label>Đánh giá</label><input type="number" id="fosterRating" value="${foster.rating}" min="1" max="5"/></div>
-          <div class="fgroup"><label>Trạng thái</label><select id="fosterStatus"><option value="active" ${foster.status === 'active' ? 'selected' : ''}>🟢 Hoạt động</option><option value="busy" ${foster.status === 'busy' ? 'selected' : ''}>🟡 Đã có thú</option><option value="inactive" ${foster.status === 'inactive' ? 'selected' : ''}>🔴 Tạm dừng</option></select></div>
-          <div class="fgroup"><label>Ngày tham gia</label><input type="date" id="fosterJoined" value="${foster.joined}"/></div>
-        </div>
-        <div class="form-actions"><button type="submit" class="btn-submit">💾 Lưu</button><button type="button" class="btn-reset" onclick="renderFosters()">❌ Hủy</button></div>
-      </form>
-    </div>
-  `;
-  document.getElementById("fosterFormModal").addEventListener("submit", (e) => { e.preventDefault(); updateFoster(); });
-}
-
-function updateFoster() {
-  const fosters = getStoredFosters();
-  const idx = fosters.findIndex(f => f.id === editingFosterId);
-  if (idx !== -1) {
-    fosters[idx] = { ...fosters[idx], name: document.getElementById("fosterName").value, avatar: document.getElementById("fosterAvatar").value, phone: document.getElementById("fosterPhone").value, email: document.getElementById("fosterEmail").value, area: document.getElementById("fosterArea").value, type: document.getElementById("fosterType").value, max: parseInt(document.getElementById("fosterMax").value), current: parseInt(document.getElementById("fosterCurrent").value), rating: parseInt(document.getElementById("fosterRating").value), status: document.getElementById("fosterStatus").value, joined: document.getElementById("fosterJoined").value };
-    saveFosters(fosters);
-    showToast(`✏️ Đã cập nhật!`);
-  }
-  renderFosters();
-}
-
-function deleteFoster(id) {
-  if (!confirm("Xóa người nuôi tạm này?")) return;
-  saveFosters(getStoredFosters().filter(f => f.id !== id));
-  showToast("🗑 Đã xóa!");
-  renderFosters();
-}
-
-// ===== VOLUNTEERS CRUD (THÊM MỚI - CÓ NÚT SỬA) =====
+// ===== VOLUNTEERS =====
 function renderVolunteers() {
-  const volunteers = getStoredVolunteers();
+  const volunteers = [
+    { name: "Trần Minh Khoa", role: "Rescuer", area: "Q.1, Q.3", phone: "0901111222", status: "active", missions: 12, joined: "10/01/2025" },
+    { name: "Nguyễn Thu Hà", role: "Foster Parent", area: "Thủ Đức", phone: "0912222333", status: "active", missions: 8, joined: "18/01/2025" },
+    { name: "Lê Văn Dũng", role: "Coordinator", area: "Online", phone: "0923333444", status: "active", missions: 24, joined: "05/01/2025" },
+    { name: "Phạm Bích Ngọc", role: "Pet Photographer", area: "Q.7, Q.5", phone: "0934444555", status: "inactive", missions: 5, joined: "20/02/2025" },
+    { name: "Vũ Hoàng Nam", role: "Rescuer", area: "Bình Thạnh", phone: "0945555666", status: "active", missions: 17, joined: "14/01/2025" },
+  ];
+
   document.getElementById("pageContent").innerHTML = `
     <div class="table-card">
       <div class="table-header">
         <span class="table-title">🙋 Danh sách tình nguyện viên (${volunteers.length})</span>
-        <button class="btn-submit" onclick="showAddVolunteerForm()">+ Thêm mới</button>
       </div>
       <div style="overflow-x:auto">
         <table class="tbl">
-          <thead>
-            <tr><th>Avatar</th><th>Tên</th><th>Vai trò</th><th>Khu vực</th><th>Nhiệm vụ</th><th>Kỹ năng</th><th>Trạng thái</th><th>Ngày</th><th>Hành động</th></tr>
-          </thead>
+          <thead><tr><th>Tên</th><th>Vai trò</th><th>Khu vực</th><th>Nhiệm vụ</th><th>Trạng thái</th><th>Ngày tham gia</th></tr></thead>
           <tbody>
             ${volunteers.map(v => `
               <tr>
-                <td style="font-size:1.5rem">${v.avatar || '🙋'}</td>
-                <td><strong>${v.name}</strong><br><small>${v.phone}</small></td>
-                <td>${v.role}</td>
-                <td>${v.area}</td>
-                <td>${v.missions} nhiệm vụ</div></td>
-                <td><span class="pet-tag">${(v.skills || []).join(', ')}</span></td>
-                <td><span class="sbadge ${v.status === 'active' ? 'sbadge-approved' : 'sbadge-rejected'}">${v.status === 'active' ? '✅ Hoạt động' : '⏸ Tạm ngưng'}</span></td>
-                <td>${v.joined}</td>
-                <td><div class="action-btns"><button class="btn-edit" onclick="editVolunteer(${v.id})">✏️ Sửa</button><button class="btn-delete" onclick="deleteVolunteer(${v.id})">🗑 Xóa</button></div></td>
+                <td>
+                  <div class="pet-cell-name">${v.name}</div>
+                  <div class="pet-cell-sub">${v.phone}</div>
+                </td>
+                <td><span class="sbadge sbadge-approved" style="background:#E8F0FF;color:var(--blue)">${v.role}</span></td>
+                <td style="font-size:0.82rem">${v.area}</td>
+                <td><span style="font-family:var(--font-mono);font-weight:700">${v.missions}</span></td>
+                <td>
+                  <span class="sbadge ${v.status === "active" ? "sbadge-approved" : "sbadge-rejected"}">
+                    ${v.status === "active" ? "✅ Đang hoạt động" : "⏸ Tạm ngưng"}
+                  </span>
+                </td>
+                <td style="font-size:0.78rem;color:var(--mid-gray)">${v.joined}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -1333,123 +902,13 @@ function renderVolunteers() {
   `;
 }
 
-function showAddVolunteerForm() {
-  editingVolunteerId = null;
-  document.getElementById("pageContent").innerHTML = `
-    <div class="add-form-card">
-      <h2>➕ Thêm tình nguyện viên mới</h2>
-      <form id="volunteerFormModal">
-        <div class="form-grid">
-          <div class="fgroup"><label>Họ tên *</label><input type="text" id="volName" required/></div>
-          <div class="fgroup"><label>Avatar (emoji)</label><input type="text" id="volAvatar" value="🙋"/></div>
-          <div class="fgroup"><label>Số điện thoại *</label><input type="tel" id="volPhone" required/></div>
-          <div class="fgroup"><label>Email *</label><input type="email" id="volEmail" required/></div>
-          <div class="fgroup"><label>Vai trò</label><select id="volRole"><option value="Rescuer">🚑 Rescuer</option><option value="Foster Parent">🏠 Foster Parent</option><option value="Coordinator">💻 Coordinator</option><option value="Pet Photographer">📸 Pet Photographer</option></select></div>
-          <div class="fgroup"><label>Khu vực</label><input type="text" id="volArea"/></div>
-          <div class="fgroup"><label>Số nhiệm vụ</label><input type="number" id="volMissions" value="0" min="0"/></div>
-          <div class="fgroup"><label>Kỹ năng</label><input type="text" id="volSkills" placeholder="Bắt chó mèo, Sơ cứu..."/></div>
-          <div class="fgroup"><label>Trạng thái</label><select id="volStatus"><option value="active">✅ Đang hoạt động</option><option value="inactive">⏸ Tạm ngưng</option></select></div>
-          <div class="fgroup"><label>Ngày tham gia</label><input type="date" id="volJoined" value="${new Date().toISOString().split('T')[0]}"/></div>
-        </div>
-        <div class="form-actions"><button type="submit" class="btn-submit">💾 Lưu</button><button type="button" class="btn-reset" onclick="renderVolunteers()">❌ Hủy</button></div>
-      </form>
-    </div>
-  `;
-  document.getElementById("volunteerFormModal").addEventListener("submit", (e) => { e.preventDefault(); submitAddVolunteer(); });
-}
-
-function submitAddVolunteer() {
-  const volunteers = getStoredVolunteers();
-  const newId = Math.max(...volunteers.map(v => v.id), 0) + 1;
-  const skillsStr = document.getElementById("volSkills").value;
-  const skills = skillsStr ? skillsStr.split(',').map(s => s.trim()) : [];
-  const newVolunteer = {
-    id: newId, name: document.getElementById("volName").value, avatar: document.getElementById("volAvatar").value,
-    phone: document.getElementById("volPhone").value, email: document.getElementById("volEmail").value,
-    role: document.getElementById("volRole").value, area: document.getElementById("volArea").value,
-    missions: parseInt(document.getElementById("volMissions").value), skills: skills,
-    status: document.getElementById("volStatus").value, joined: document.getElementById("volJoined").value,
-  };
-  volunteers.push(newVolunteer);
-  saveVolunteers(volunteers);
-  showToast(`✅ Đã thêm "${newVolunteer.name}"!`);
-  renderVolunteers();
-}
-
-function editVolunteer(id) {
-  const volunteers = getStoredVolunteers();
-  const volunteer = volunteers.find(v => v.id === id);
-  if (!volunteer) return;
-  editingVolunteerId = id;
-  document.getElementById("pageContent").innerHTML = `
-    <div class="add-form-card">
-      <h2>✏️ Chỉnh sửa: ${volunteer.name}</h2>
-      <form id="volunteerFormModal">
-        <div class="form-grid">
-          <div class="fgroup"><label>Họ tên</label><input type="text" id="volName" value="${volunteer.name}" required/></div>
-          <div class="fgroup"><label>Avatar</label><input type="text" id="volAvatar" value="${volunteer.avatar || '🙋'}"/></div>
-          <div class="fgroup"><label>SĐT</label><input type="tel" id="volPhone" value="${volunteer.phone}" required/></div>
-          <div class="fgroup"><label>Email</label><input type="email" id="volEmail" value="${volunteer.email}" required/></div>
-          <div class="fgroup"><label>Vai trò</label><select id="volRole"><option value="Rescuer" ${volunteer.role === 'Rescuer' ? 'selected' : ''}>🚑 Rescuer</option><option value="Foster Parent" ${volunteer.role === 'Foster Parent' ? 'selected' : ''}>🏠 Foster Parent</option><option value="Coordinator" ${volunteer.role === 'Coordinator' ? 'selected' : ''}>💻 Coordinator</option><option value="Pet Photographer" ${volunteer.role === 'Pet Photographer' ? 'selected' : ''}>📸 Pet Photographer</option></select></div>
-          <div class="fgroup"><label>Khu vực</label><input type="text" id="volArea" value="${volunteer.area}"/></div>
-          <div class="fgroup"><label>Số nhiệm vụ</label><input type="number" id="volMissions" value="${volunteer.missions}" min="0"/></div>
-          <div class="fgroup"><label>Kỹ năng</label><input type="text" id="volSkills" value="${(volunteer.skills || []).join(', ')}"/></div>
-          <div class="fgroup"><label>Trạng thái</label><select id="volStatus"><option value="active" ${volunteer.status === 'active' ? 'selected' : ''}>✅ Hoạt động</option><option value="inactive" ${volunteer.status === 'inactive' ? 'selected' : ''}>⏸ Tạm ngưng</option></select></div>
-          <div class="fgroup"><label>Ngày tham gia</label><input type="date" id="volJoined" value="${volunteer.joined}"/></div>
-        </div>
-        <div class="form-actions"><button type="submit" class="btn-submit">💾 Lưu</button><button type="button" class="btn-reset" onclick="renderVolunteers()">❌ Hủy</button></div>
-      </form>
-    </div>
-  `;
-  document.getElementById("volunteerFormModal").addEventListener("submit", (e) => { e.preventDefault(); updateVolunteer(); });
-}
-
-function updateVolunteer() {
-  const volunteers = getStoredVolunteers();
-  const idx = volunteers.findIndex(v => v.id === editingVolunteerId);
-  if (idx !== -1) {
-    const skillsStr = document.getElementById("volSkills").value;
-    const skills = skillsStr ? skillsStr.split(',').map(s => s.trim()) : [];
-    volunteers[idx] = { ...volunteers[idx], name: document.getElementById("volName").value, avatar: document.getElementById("volAvatar").value, phone: document.getElementById("volPhone").value, email: document.getElementById("volEmail").value, role: document.getElementById("volRole").value, area: document.getElementById("volArea").value, missions: parseInt(document.getElementById("volMissions").value), skills: skills, status: document.getElementById("volStatus").value, joined: document.getElementById("volJoined").value };
-    saveVolunteers(volunteers);
-    showToast(`✏️ Đã cập nhật!`);
-  }
-  renderVolunteers();
-}
-
-function deleteVolunteer(id) {
-  if (!confirm("Xóa tình nguyện viên này?")) return;
-  saveVolunteers(getStoredVolunteers().filter(v => v.id !== id));
-  showToast("🗑 Đã xóa!");
-  renderVolunteers();
-}
-
 // ===== MODAL HELPERS =====
-function initModal() {
-  // Modal initialization is handled by the modal functions
-}
+function openModal() { document.getElementById("detailModal").classList.add("open"); document.body.style.overflow = "hidden"; }
+function closeModal() { document.getElementById("detailModal").classList.remove("open"); document.body.style.overflow = ""; }
 
-function openModal() { 
-  const modal = document.getElementById("detailModal");
-  if (modal) {
-    modal.classList.add("open");
-    document.body.style.overflow = "hidden";
-  }
-}
-
-function closeModal() { 
-  const modal = document.getElementById("detailModal");
-  if (modal) {
-    modal.classList.remove("open");
-    document.body.style.overflow = "";
-  }
-}
-
-if (document.getElementById("detailModal")) {
-  document.getElementById("detailModal").addEventListener("click", e => {
-    if (e.target === document.getElementById("detailModal")) closeModal();
-  });
-}
+document.getElementById("detailModal").addEventListener("click", e => {
+  if (e.target === document.getElementById("detailModal")) closeModal();
+});
 
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
@@ -1457,10 +916,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal()
 let toastTimeout;
 function showToast(msg) {
   const toast = document.getElementById("toast");
-  if (toast) {
-    toast.textContent = msg;
-    toast.classList.add("show");
-    clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => toast.classList.remove("show"), 3500);
-  }
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove("show"), 3500);
 }
