@@ -738,3 +738,49 @@ document.addEventListener("keydown", e => {
     closeMobileMenu();
   }
 });
+
+// ===== NAV AUTH =====
+function initNavAuth() {
+  const navAuth = document.getElementById("navAuth");
+  if (!navAuth) return;
+
+  const SESSION_KEY = "pawgen_session";
+  let session = null;
+  try { session = JSON.parse(localStorage.getItem(SESSION_KEY) || localStorage.getItem("pawlink_session")); } catch {}
+
+  if (!session) {
+    navAuth.innerHTML = `<a href="auth.html" class="btn-nav-login">👤 Đăng nhập</a>`;
+  } else {
+    const initial = session.name ? session.name.charAt(0).toUpperCase() : "U";
+    const isAdmin = session.role === "admin";
+    navAuth.innerHTML = `
+      <div class="nav-user-pill">
+        <div class="nav-avatar ${isAdmin ? 'admin-av' : ''}">${initial}</div>
+        <span>${session.name.split(" ").slice(-1)[0]}</span>
+        ${isAdmin ? '<span style="font-size:0.65rem;background:var(--forest);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;margin-left:2px">Admin</span>' : ""}
+        <div class="nav-dropdown">
+          <div style="padding:0.75rem 1rem;border-bottom:1px solid var(--light-gray)">
+            <div style="font-weight:700;font-size:0.85rem">${session.name}</div>
+            <div style="font-size:0.72rem;color:var(--mid-gray)">${session.email || ""}</div>
+          </div>
+          ${isAdmin ? `<a href="admin.html" class="nav-dd-item">🛡️ Trang quản trị</a>` : ""}
+          <a href="#rescue" class="nav-dd-item" onclick="scrollToSection('rescue')">🚨 Báo cứu hộ</a>
+          <a href="#adopt" class="nav-dd-item" onclick="scrollToSection('adopt')">🐾 Tìm thú cưng</a>
+          <div class="nav-dd-divider"></div>
+          <button class="nav-dd-item danger" onclick="logoutUser()">⏻ Đăng xuất</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function logoutUser() {
+  localStorage.removeItem("pawgen_session");
+  localStorage.removeItem("pawlink_session");
+  window.location.reload();
+}
+
+// Re-init on load
+document.addEventListener("DOMContentLoaded", () => {
+  initNavAuth();
+});

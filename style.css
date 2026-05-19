@@ -1472,3 +1472,87 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
   .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
   .merch-cart-float { bottom: 1rem; right: 1rem; left: 1rem; justify-content: space-between; }
 }
+
+/* ===== NAV AUTH ===== */
+.btn-nav-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  background: var(--white);
+  color: var(--charcoal);
+  border: 2px solid var(--light-gray);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-nav-login:hover { border-color: var(--terracotta); color: var(--terracotta); }
+
+.nav-user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.75rem 0.3rem 0.35rem;
+  background: var(--cream-2);
+  border: 1.5px solid var(--light-gray);
+  border-radius: 30px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+}
+.nav-user-pill:hover { border-color: var(--terracotta); }
+
+.nav-avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--terracotta);
+  color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.nav-avatar.admin-av { background: var(--forest); }
+
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--white);
+  border: 1.5px solid var(--light-gray);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  min-width: 180px;
+  z-index: 999;
+  overflow: hidden;
+}
+.nav-user-pill:hover .nav-dropdown { display: block; }
+
+.nav-dd-item {
+  display: block;
+  padding: 0.65rem 1rem;
+  font-size: 0.82rem;
+  color: var(--charcoal);
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-body);
+  text-decoration: none;
+}
+.nav-dd-item:hover { background: var(--cream); color: var(--terracotta); }
+.nav-dd-item.danger { color: var(--red-urgent); }
+.nav-dd-item.danger:hover { background: #FFEAEA; }
+.nav-dd-divider { height: 1px; background: var(--light-gray); margin: 0.25rem 0; }
