@@ -62,6 +62,7 @@ let currentDashTab = "overview";
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
   initNavbar();
+  initNavAuth();
   initFloatingPaws();
   initCounters();
   initPetsGrid();
@@ -779,8 +780,3 @@ function logoutUser() {
   localStorage.removeItem("pawlink_session");
   window.location.reload();
 }
-
-// Re-init on load
-document.addEventListener("DOMContentLoaded", () => {
-  initNavAuth();
-});
