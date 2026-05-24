@@ -230,14 +230,17 @@
       <div style="margin-top: 2rem;">
         <h3 style="font-family: var(--font-body); font-size: 1.2rem; margin-bottom: 1rem;">💝 Tài trợ cho ${pet.name}</h3>
         <div class="funding-options">
-          <button onclick="donateForPet(50000, ${pet.id}, 'Thức ăn')">50K - Thức ăn</button>
-          <button onclick="donateForPet(100000, ${pet.id}, 'Thuốc men')">100K - Thuốc men</button>
-          <button onclick="donateForPet(200000, ${pet.id}, 'Vaccine')">200K - Vaccine</button>
-          <button onclick="donateForPet(500000, ${pet.id}, 'Triệt sản')">500K - Triệt sản</button>
+          <button onclick="donateForPet(2000,  ${pet.id}, 'Góp nhỏ yêu thương')">2K 🐾</button>
+          <button onclick="donateForPet(5000,  ${pet.id}, 'Thức ăn 1 bữa')">5K 🍚</button>
+          <button onclick="donateForPet(10000, ${pet.id}, 'Thức ăn')">10K 🥣</button>
+          <button onclick="donateForPet(20000, ${pet.id}, 'Thuốc men')">20K 💊</button>
+          <button onclick="donateForPet(50000, ${pet.id}, 'Khám thú y')">50K 🏥</button>
         </div>
-        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-          <input type="number" id="customAmount" placeholder="Số tiền khác..." style="flex: 1; padding: 0.75rem; border: 2px solid var(--light-gray); border-radius: var(--radius-sm);">
-          <button onclick="donateCustom(${pet.id})" class="btn-primary">Donate</button>
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; align-items: center; background: var(--cream); border-radius: var(--radius-sm); padding: 0.5rem;">
+          <span style="font-size:0.82rem;color:var(--mid-gray);white-space:nowrap">Số tiền (VNĐ):</span>
+          <input type="number" id="customAmount" placeholder="Nhập số tiền..." min="1000" step="1000"
+            style="flex: 1; padding: 0.6rem 0.75rem; border: 2px solid var(--light-gray); border-radius: var(--radius-sm); font-size:0.9rem;">
+          <button onclick="donateCustom(${pet.id})" class="btn-primary" style="padding:0.6rem 1rem;font-size:0.85rem;white-space:nowrap">💝 Donate</button>
         </div>
       </div>
       

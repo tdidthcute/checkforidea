@@ -431,11 +431,11 @@ function initDonateAmounts() {
   const customInput = document.getElementById("customDonate");
 
   const impactMap = {
-    20000: "1 bát thức ăn cho thú cưng",
-    50000: "1 buổi khám thú y",
-    100000: "1 liều vaccine cơ bản",
-    200000: "Thức ăn cho 1 tuần nuôi tạm",
-    500000: "1 ca phẫu thuật nhỏ"
+    2000:  "1 gói thức ăn nhỏ cho thú cưng 🐾",
+    5000:  "1 bữa ăn no cho thú cưng 🍚",
+    10000: "1 ngày chăm sóc cơ bản 🐱",
+    20000: "1 bát thức ăn + snack 🥣",
+    50000: "1 buổi khám thú y 🏥",
   };
 
   btns.forEach(btn => {
