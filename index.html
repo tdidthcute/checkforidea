@@ -335,9 +335,7 @@
         </ul>
         <button class="btn-role" onclick="openVolunteerModal('Coordinator')">Đăng ký</button>
       </div>
-      <!-- admin inject vào đây -->
     </div>
-    <div id="volunteerAdminTable"></div>
   </section>
 
   <!-- ===== DASHBOARD ===== -->
@@ -396,7 +394,12 @@
             <button class="donate-amt active" data-amt="10000">10K</button>
             <button class="donate-amt" data-amt="20000">20K</button>
             <button class="donate-amt" data-amt="50000">50K</button>
-            <input type="number" class="donate-custom" placeholder="Tùy chỉnh (VNĐ)..." id="customDonate" min="1000" step="1000"/>
+            
+            
+            
+            
+            
+            <input type="number" class="donate-custom" placeholder="Số khác..." id="customDonate"/>
           </div>
           <div class="donate-purpose">
             <label>Donate cho:</label>
@@ -408,7 +411,7 @@
             </select>
           </div>
           <div class="donate-impact" id="donateImpact">
-            <span>✨ 10,000 VNĐ = 1 ngày chăm sóc cơ bản 🐱</span>
+            <span>✨ 50,000 VNĐ = 1 buổi khám thú y</span>
           </div>
           <button class="btn-donate" id="donateBtn">💝 Donate ngay</button>
           <p class="donate-note">Thanh toán qua Momo, VNPay, chuyển khoản ngân hàng</p>
