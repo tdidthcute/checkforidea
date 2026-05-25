@@ -170,11 +170,10 @@ function scrollToSection(id) {
 
 // ===== PETS GRID =====
 function initPetsGrid() {
-  // Merge hardcoded pets with admin-approved pets from localStorage
+  // Đọc thú cưng từ admin (key "pawlink_pets") và merge với data mặc định
   try {
-    const adminPets = JSON.parse(localStorage.getItem("pawgen_pets") || "[]");
+    const adminPets = JSON.parse(localStorage.getItem("pawlink_pets") || "[]");
     if (adminPets.length > 0) {
-      // Add admin pets that aren't already in the list
       adminPets.forEach(p => {
         if (!PETS_DATA.find(existing => existing.id === p.id)) {
           PETS_DATA.push(p);
@@ -288,7 +287,15 @@ function initMerchGrid() {
 
 function renderMerch(filter) {
   const grid = document.getElementById("merchGrid");
-  let items = MERCH_DATA;
+
+  // Đọc merch từ admin localStorage, fallback về MERCH_DATA cứng
+  let allMerch = MERCH_DATA;
+  try {
+    const adminMerch = JSON.parse(localStorage.getItem("pawgen_merch") || "null");
+    if (adminMerch && adminMerch.length > 0) allMerch = adminMerch;
+  } catch(e) {}
+
+  let items = allMerch;
   if (filter !== "all") items = items.filter(m => m.type === filter);
 
   grid.innerHTML = items.map(m => `
@@ -322,7 +329,12 @@ function initMerchFilterBtns() {
 
 // ===== CART =====
 function addToCart(id) {
-  const item = MERCH_DATA.find(m => m.id === id);
+  let allMerch = MERCH_DATA;
+  try {
+    const adminMerch = JSON.parse(localStorage.getItem("pawgen_merch") || "null");
+    if (adminMerch && adminMerch.length > 0) allMerch = adminMerch;
+  } catch(e) {}
+  const item = allMerch.find(m => Number(m.id) === Number(id));
   if (!item) return;
 
   const existing = cart.find(c => c.id === id);
@@ -471,14 +483,16 @@ function initDonateAmounts() {
 
 // ===== DONATE QR MODAL =====
 function openDonateQRModal(amt) {
-  // Bank info — đổi thành thông tin thật của tổ chức
-  const BANK_NAME    = "MB Bank";
-  const ACCOUNT_NO   = "0123456789";
-  const ACCOUNT_NAME = "QUY CUU HO PAWGEN";
-  const content      = `Donate PAWGEN ${amt}`;
+  // ===== CẬP NHẬT THÔNG TIN NGÂN HÀNG TẠI ĐÂY =====
+  const BANK_NAME    = "MB Bank";          // Tên ngân hàng (VD: Vietcombank, MB Bank, Techcombank...)
+  const BANK_CODE    = "MB";               // Mã ngân hàng cho VietQR (MB, VCB, TCB, ACB, BIDV, VTB...)
+  const ACCOUNT_NO   = "0123456789";       // ← ĐỔI THÀNH SỐ TK CỦA BẠN
+  const ACCOUNT_NAME = "QUY CUU HO PAWGEN"; // ← ĐỔI THÀNH TÊN CHỦ TK (viết hoa không dấu)
+  // =====================================================
+  const content = `Donate PAWGEN ${amt}`;
 
   // VietQR URL (chuẩn Napas/VietQR)
-  const vietQRUrl = `https://img.vietqr.io/image/MB-${ACCOUNT_NO}-compact2.png?amount=${amt}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+  const vietQRUrl = `https://img.vietqr.io/image/${BANK_CODE}-${ACCOUNT_NO}-compact2.png?amount=${amt}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
 
   // Inject modal vào body nếu chưa có
   let modal = document.getElementById("donateQRModal");
