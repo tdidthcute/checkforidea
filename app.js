@@ -459,7 +459,6 @@ function initDonateAmounts() {
   });
 
   document.getElementById("donateBtn").addEventListener("click", () => {
-    const customVal = parseInt(customInput.value);
     const activeBtn = document.querySelector(".donate-amt.active");
     const customVal = parseInt(customInput.value);
     const amt = customVal || (activeBtn ? parseInt(activeBtn.dataset.amt) : 0);
@@ -748,12 +747,17 @@ function initNavAuth() {
   const navAuth = document.getElementById("navAuth");
   if (!navAuth) return;
 
-  const SESSION_KEY = "pawgen_session";
   let session = null;
-  try { session = JSON.parse(localStorage.getItem(SESSION_KEY) || localStorage.getItem("pawlink_session")); } catch {}
+  try {
+    const raw = localStorage.getItem("pawlink_session") || localStorage.getItem("pawgen_session");
+    session = raw ? JSON.parse(raw) : null;
+  } catch {}
 
   if (!session) {
-    navAuth.innerHTML = `<a href="auth.html" class="btn-nav-login">👤 Đăng nhập</a>`;
+    navAuth.innerHTML = `
+      <a href="login.html" class="btn-nav-login">👤 Đăng nhập</a>
+      <a href="login.html" style="margin-left:0.5rem;padding:0.5rem 1rem;background:var(--forest);color:#fff;border-radius:var(--radius-sm);font-size:0.82rem;font-weight:600;white-space:nowrap;display:inline-block;">🛡️ Admin</a>
+    `;
   } else {
     const initial = session.name ? session.name.charAt(0).toUpperCase() : "U";
     const isAdmin = session.role === "admin";
@@ -767,7 +771,7 @@ function initNavAuth() {
             <div style="font-weight:700;font-size:0.85rem">${session.name}</div>
             <div style="font-size:0.72rem;color:var(--mid-gray)">${session.email || ""}</div>
           </div>
-          ${isAdmin ? `<a href="admin.html" class="nav-dd-item">🛡️ Trang quản trị</a>` : ""}
+          <a href="admin.html" class="nav-dd-item">🛡️ Trang quản trị</a>
           <a href="#rescue" class="nav-dd-item" onclick="scrollToSection('rescue')">🚨 Báo cứu hộ</a>
           <a href="#adopt" class="nav-dd-item" onclick="scrollToSection('adopt')">🐾 Tìm thú cưng</a>
           <div class="nav-dd-divider"></div>
