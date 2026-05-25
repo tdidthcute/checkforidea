@@ -465,9 +465,85 @@ function initDonateAmounts() {
 
     if (!amt) { showToast("⚠️ Vui lòng chọn hoặc nhập số tiền donate!"); return; }
 
-    showToast(`💝 Cảm ơn bạn đã donate ${formatPrice(amt)}! Đang chuyển đến cổng thanh toán...`);
+    openDonateQRModal(amt);
   });
 }
+
+// ===== DONATE QR MODAL =====
+function openDonateQRModal(amt) {
+  // Bank info — đổi thành thông tin thật của tổ chức
+  const BANK_NAME    = "MB Bank";
+  const ACCOUNT_NO   = "0123456789";
+  const ACCOUNT_NAME = "QUY CUU HO PAWGEN";
+  const content      = `Donate PAWGEN ${amt}`;
+
+  // VietQR URL (chuẩn Napas/VietQR)
+  const vietQRUrl = `https://img.vietqr.io/image/MB-${ACCOUNT_NO}-compact2.png?amount=${amt}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+
+  // Inject modal vào body nếu chưa có
+  let modal = document.getElementById("donateQRModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "donateQRModal";
+    modal.className = "modal-overlay";
+    modal.innerHTML = `
+      <div class="modal" style="max-width:420px;text-align:center;padding:2rem">
+        <button class="modal-close" onclick="closeModal('donateQRModal')" style="position:absolute;top:1rem;right:1rem">✕</button>
+        <div style="font-size:2.5rem;margin-bottom:0.5rem">💝</div>
+        <h3 style="font-family:var(--font-display);font-size:1.4rem;margin-bottom:0.25rem">Quét để donate</h3>
+        <p id="dqrAmt" style="color:var(--terracotta);font-size:1.6rem;font-weight:900;font-family:var(--font-display);margin-bottom:1rem"></p>
+
+        <div style="background:var(--cream);border-radius:var(--radius-md);padding:1.25rem;margin-bottom:1rem">
+          <img id="dqrImg" src="" alt="QR Code donate" style="width:200px;height:200px;margin:0 auto;border-radius:12px;display:block;border:3px solid var(--white);box-shadow:var(--shadow-sm)"/>
+          <div id="dqrLoading" style="width:200px;height:200px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:2rem;display:none">⏳</div>
+        </div>
+
+        <div style="background:var(--cream-2);border-radius:var(--radius-sm);padding:0.875rem;text-align:left;font-size:0.82rem;line-height:1.8;margin-bottom:1.25rem">
+          <div>🏦 <strong>Ngân hàng:</strong> ${BANK_NAME}</div>
+          <div>💳 <strong>Số tài khoản:</strong> <span style="font-family:var(--font-mono);font-weight:700">${ACCOUNT_NO}</span></div>
+          <div>👤 <strong>Chủ tài khoản:</strong> ${ACCOUNT_NAME}</div>
+          <div id="dqrMsgLine">📝 <strong>Nội dung CK:</strong> <span style="font-family:var(--font-mono)" id="dqrMsg"></span></div>
+        </div>
+
+        <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap">
+          <button onclick="copyDonateInfo()" style="padding:0.6rem 1.2rem;background:var(--forest);color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.85rem">📋 Sao chép TK</button>
+          <button onclick="closeModal('donateQRModal')" style="padding:0.6rem 1.2rem;background:var(--cream-2);color:var(--charcoal);border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.85rem">Đóng</button>
+        </div>
+        <p style="font-size:0.72rem;color:var(--mid-gray);margin-top:1rem">✅ 100% số tiền vào quỹ cứu hộ PAWGEN. Cảm ơn bạn rất nhiều! 🐾</p>
+      </div>
+    `;
+    modal.addEventListener("click", e => { if (e.target === modal) closeModal("donateQRModal"); });
+    document.body.appendChild(modal);
+  }
+
+  // Update content
+  document.getElementById("dqrAmt").textContent = formatPrice(amt);
+  document.getElementById("dqrMsg").textContent = content;
+  const img = document.getElementById("dqrImg");
+  img.style.display = "none";
+  img.src = vietQRUrl;
+  img.onload = () => { img.style.display = "block"; };
+  img.onerror = () => {
+    img.style.display = "none";
+    img.insertAdjacentHTML("afterend", `<div style="padding:1rem;color:var(--mid-gray);font-size:0.82rem">⚠️ Không tải được QR. Vui lòng chuyển khoản theo thông tin bên dưới.</div>`);
+  };
+
+  // store for copy
+  modal._accountNo = ACCOUNT_NO;
+  modal._accountName = ACCOUNT_NAME;
+  modal._content = content;
+
+  openModal("donateQRModal");
+}
+
+window.copyDonateInfo = function() {
+  const modal = document.getElementById("donateQRModal");
+  const text = `Ngân hàng: MB Bank\nSố TK: ${modal._accountNo}\nChủ TK: ${modal._accountName}\nNội dung: ${modal._content}`;
+  navigator.clipboard.writeText(text).then(
+    () => showToast("✅ Đã sao chép thông tin chuyển khoản!"),
+    () => showToast(`STK: ${modal._accountNo}`)
+  );
+};
 
 // ===== DASHBOARD =====
 function initDashboard() {
@@ -665,29 +741,68 @@ function initUploadZone() {
   const zone = document.getElementById("uploadZone");
   const fileInput = document.getElementById("fileInput");
 
-  zone.addEventListener("click", () => fileInput.click());
-  fileInput.addEventListener("change", e => {
-    if (e.target.files[0]) {
-      zone.innerHTML = `<span>✅ Đã tải ảnh: ${e.target.files[0].name}</span>`;
-      zone.style.borderColor = "var(--forest-light)";
-      zone.style.color = "var(--forest-light)";
+  function handleFile(file) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      showToast("⚠️ Vui lòng chọn file ảnh (JPG, PNG, GIF...)!");
+      return;
     }
-  });
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      zone.innerHTML = `
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:center">
+          <img src="${ev.target.result}" alt="preview" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--forest-light)"/>
+          <div style="text-align:left">
+            <div style="color:var(--forest-light);font-weight:600">✅ Đã tải ảnh</div>
+            <div style="font-size:0.78rem;color:var(--mid-gray);margin-top:0.2rem">${file.name}</div>
+            <div style="font-size:0.72rem;color:var(--mid-gray)">${(file.size/1024).toFixed(1)} KB</div>
+            <button type="button" onclick="resetUploadZone()" style="margin-top:0.4rem;padding:0.2rem 0.6rem;font-size:0.72rem;background:none;border:1px solid var(--light-gray);border-radius:6px;cursor:pointer;color:var(--mid-gray)">Đổi ảnh</button>
+          </div>
+        </div>
+      `;
+      zone.style.borderColor = "var(--forest-light)";
+      zone.style.background = "#F0FFF4";
+      zone._file = file;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  window.resetUploadZone = function() {
+    zone._file = null;
+    zone.style.borderColor = "";
+    zone.style.background = "";
+    zone.innerHTML = `<span>📷 Nhấn để tải ảnh lên hoặc kéo thả</span>`;
+    reinitZoneEvents();
+  };
+
+  function reinitZoneEvents() {
+    const fi = zone.querySelector("input[type=file]") || (() => {
+      const inp = document.createElement("input");
+      inp.type = "file"; inp.accept = "image/*"; inp.style.display = "none";
+      zone.appendChild(inp);
+      return inp;
+    })();
+    fi.addEventListener("change", e => handleFile(e.target.files[0]));
+    zone.onclick = () => fi.click();
+  }
 
   zone.addEventListener("dragover", e => {
     e.preventDefault();
     zone.style.borderColor = "var(--terracotta)";
+    zone.style.background = "#FFF5F0";
   });
-  zone.addEventListener("dragleave", () => zone.style.borderColor = "var(--light-gray)");
+  zone.addEventListener("dragleave", () => {
+    zone.style.borderColor = "";
+    zone.style.background = "";
+  });
   zone.addEventListener("drop", e => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      zone.innerHTML = `<span>✅ Đã tải ảnh: ${file.name}</span>`;
-      zone.style.borderColor = "var(--forest-light)";
-      zone.style.color = "var(--forest-light)";
-    }
+    handleFile(e.dataTransfer.files[0]);
   });
+
+  zone.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", e => handleFile(e.target.files[0]));
+  fileInput.addEventListener("click", e => e.stopPropagation());
 }
 
 // ===== MODALS =====
