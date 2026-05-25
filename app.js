@@ -484,9 +484,9 @@ function initDonateAmounts() {
 // ===== DONATE QR MODAL =====
 function openDonateQRModal(amt) {
   // ===== CẬP NHẬT THÔNG TIN NGÂN HÀNG TẠI ĐÂY =====
-  const BANK_NAME    = "MB Bank";          // Tên ngân hàng (VD: Vietcombank, MB Bank, Techcombank...)
-  const BANK_CODE    = "MB";               // Mã ngân hàng cho VietQR (MB, VCB, TCB, ACB, BIDV, VTB...)
-  const ACCOUNT_NO   = "0123456789";       // ← ĐỔI THÀNH SỐ TK CỦA BẠN
+  const BANK_NAME    = "TechcomBank";          // Tên ngân hàng (VD: Vietcombank, MB Bank, Techcombank...)
+  const BANK_CODE    = "TCB";               // Mã ngân hàng cho VietQR (MB, VCB, TCB, ACB, BIDV, VTB...)
+  const ACCOUNT_NO   = "19075401204017";       // ← ĐỔI THÀNH SỐ TK CỦA BẠN
   const ACCOUNT_NAME = "QUY CUU HO PAWGEN"; // ← ĐỔI THÀNH TÊN CHỦ TK (viết hoa không dấu)
   // =====================================================
   const content = `Donate PAWGEN ${amt}`;
