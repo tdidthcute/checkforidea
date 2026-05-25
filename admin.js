@@ -66,24 +66,22 @@ let editingFosterId = null, editingVolunteerId = null, editingMerchId = null;
 
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
-  // FIX #1: Kiểm tra session trước — nếu đã login thì vào luôn
-  const sess = getSession();
-  if (sess && sess.role === "admin") {
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("adminApp").style.display = "flex";
-    pendingList = getPending();
-    approvedList = getApproved();
-    updatePendingBadge();
-    navigateTo("overview");
-    return;
-  }
-
-  initLogin();
+  // Luôn init sidebar + modal trước
   initSidebar();
   initModal();
   pendingList = getPending();
   approvedList = getApproved();
   updatePendingBadge();
+
+  // Kiểm tra session — nếu đã login admin thì vào luôn
+  const sess = getSession();
+  if (sess && sess.role === "admin") {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("adminApp").style.display = "flex";
+    navigateTo("overview");
+  } else {
+    initLogin();
+  }
 });
 
 // ===== LOGIN (FIX #1) =====
@@ -494,8 +492,8 @@ function openAddFosterModal() {
 }
 
 function openEditFosterModal(id) {
-  editingFosterId = id;
-  const f = getFosters().find(x=>x.id===id);
+  editingFosterId = Number(id);
+  const f = getFosters().find(x=> Number(x.id) === Number(id));
   if(!f) return;
   document.getElementById("modalContent").innerHTML = fosterForm(f);
   openModal();
@@ -534,7 +532,7 @@ function saveFosterForm() {
   };
   if(!data.name){ showToast("⚠️ Vui lòng nhập họ tên!"); return; }
   if(editingFosterId) {
-    const idx = fosters.findIndex(f=>f.id===editingFosterId);
+    const idx = fosters.findIndex(f=> Number(f.id) === Number(editingFosterId));
     if(idx!==-1) fosters[idx] = {...fosters[idx], ...data};
     showToast("✏️ Đã cập nhật foster!");
   } else {
@@ -546,7 +544,7 @@ function saveFosterForm() {
 
 function deleteFoster(id) {
   if(!confirm("Xóa foster này?")) return;
-  saveFosters(getFosters().filter(f=>f.id!==id));
+  saveFosters(getFosters().filter(f=> Number(f.id) !== Number(id)));
   showToast("🗑 Đã xóa foster!"); renderFosters();
 }
 
@@ -587,8 +585,8 @@ function openAddVolunteerModal() {
 }
 
 function openEditVolunteerModal(id) {
-  editingVolunteerId = id;
-  const v = getVolunteers().find(x=>x.id===id);
+  editingVolunteerId = Number(id);
+  const v = getVolunteers().find(x=> Number(x.id) === Number(id));
   if(!v) return;
   document.getElementById("modalContent").innerHTML = volunteerForm(v);
   openModal();
@@ -626,7 +624,7 @@ function saveVolunteerForm() {
   };
   if(!data.name){ showToast("⚠️ Vui lòng nhập họ tên!"); return; }
   if(editingVolunteerId) {
-    const idx = volunteers.findIndex(v=>v.id===editingVolunteerId);
+    const idx = volunteers.findIndex(v=> Number(v.id) === Number(editingVolunteerId));
     if(idx!==-1) volunteers[idx] = {...volunteers[idx], ...data};
     showToast("✏️ Đã cập nhật tình nguyện viên!");
   } else {
@@ -638,7 +636,7 @@ function saveVolunteerForm() {
 
 function deleteVolunteer(id) {
   if(!confirm("Xóa tình nguyện viên này?")) return;
-  saveVolunteers(getVolunteers().filter(v=>v.id!==id));
+  saveVolunteers(getVolunteers().filter(v=> Number(v.id) !== Number(id)));
   showToast("🗑 Đã xóa!"); renderVolunteers();
 }
 
@@ -681,8 +679,8 @@ function openAddMerchModal() {
 }
 
 function openEditMerchModal(id) {
-  editingMerchId = id;
-  const m = getMerch().find(x=>x.id===id);
+  editingMerchId = Number(id);
+  const m = getMerch().find(x=> Number(x.id) === Number(id));
   if(!m) return;
   document.getElementById("modalContent").innerHTML = merchForm(m);
   openModal();
@@ -721,7 +719,7 @@ function saveMerchForm() {
   };
   if(!data.name){ showToast("⚠️ Vui lòng nhập tên sản phẩm!"); return; }
   if(editingMerchId) {
-    const idx = merch.findIndex(m=>m.id===editingMerchId);
+    const idx = merch.findIndex(m=> Number(m.id) === Number(editingMerchId));
     if(idx!==-1) merch[idx] = {...merch[idx], ...data};
     showToast("✏️ Đã cập nhật sản phẩm!");
   } else {
@@ -733,7 +731,7 @@ function saveMerchForm() {
 
 function deleteMerch(id) {
   if(!confirm("Xóa sản phẩm này?")) return;
-  saveMerch(getMerch().filter(m=>m.id!==id));
+  saveMerch(getMerch().filter(m=> Number(m.id) !== Number(id)));
   showToast("🗑 Đã xóa sản phẩm!"); renderMerch();
 }
 
