@@ -170,13 +170,16 @@ function scrollToSection(id) {
 
 // ===== PETS GRID =====
 function initPetsGrid() {
-  // Đọc thú cưng từ admin (key "pawlink_pets") và merge với data mặc định
+  // Đọc thú cưng từ admin (key "pawlink_pets") — override nếu đã có, thêm nếu mới
   try {
     const adminPets = JSON.parse(localStorage.getItem("pawlink_pets") || "[]");
     if (adminPets.length > 0) {
       adminPets.forEach(p => {
-        if (!PETS_DATA.find(existing => existing.id === p.id)) {
-          PETS_DATA.push(p);
+        const idx = PETS_DATA.findIndex(existing => Number(existing.id) === Number(p.id));
+        if (idx !== -1) {
+          PETS_DATA[idx] = p; // cập nhật pet đã có
+        } else {
+          PETS_DATA.push(p); // thêm pet mới do admin tạo
         }
       });
     }

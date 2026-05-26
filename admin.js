@@ -35,12 +35,15 @@ const SEED_VOLUNTEERS = [
 ];
 
 const SEED_MERCH = [
-  { id:1, name:"Áo Phông PAWGEN Classic", type:"apparel", emoji:"👕", price:250000, desc:"Unisex, cotton 100%", badge:"Bán chạy nhất", bgColor:"#E8F0FF" },
-  { id:2, name:"Hoodie Cứu Hộ Hero", type:"apparel", emoji:"🧥", price:480000, desc:"Nỉ ấm, có túi kangaroo", badge:"New", bgColor:"#FFF0E8" },
-  { id:3, name:"Tote Bag PawPrint", type:"accessory", emoji:"👜", price:150000, desc:"Canvas dày, 2 quai chắc", badge:"Eco", bgColor:"#E8FFE8" },
-  { id:4, name:"Bộ Sticker Vol.1", type:"sticker", emoji:"🎨", price:45000, desc:"12 sticker chống nước", badge:null, bgColor:"#FFF8E0" },
-  { id:5, name:"Mug Terracotta Cat", type:"homeware", emoji:"☕", price:180000, desc:"Sứ cao cấp 350ml", badge:null, bgColor:"#FFE8E8" },
-  { id:6, name:"Nón Bucket PAWGEN", type:"apparel", emoji:"🧢", price:220000, desc:"Thêu logo 3D", badge:"Limited", bgColor:"#E8F5FF" },
+  { id:1, name:"Áo Phông PAWGEN Classic", type:"apparel", emoji:"👕", price:250000, desc:"Unisex, cotton 100%, in lưới cao cấp. Màu kem & xanh rừng.", badge:"Bán chạy nhất", bgColor:"#E8F0FF" },
+  { id:2, name:"Hoodie Cứu Hộ Hero", type:"apparel", emoji:"🧥", price:480000, desc:"Nỉ ấm, có túi kangaroo. In slogan 'Rescue. Foster. Adopt.'", badge:"New", bgColor:"#FFF0E8" },
+  { id:3, name:"Tote Bag PawPrint", type:"accessory", emoji:"👜", price:150000, desc:"Canvas dày, 2 quai chắc. In dấu chân thú cưng nghệ thuật.", badge:"Eco", bgColor:"#E8FFE8" },
+  { id:4, name:"Bộ Sticker PAWGEN Vol.1", type:"sticker", emoji:"🎨", price:45000, desc:"12 sticker chống nước. Thiết kế chibi mèo chó cute.", badge:"45K", bgColor:"#FFF8E0" },
+  { id:5, name:"Mug Terracotta Cat", type:"homeware", emoji:"☕", price:180000, desc:"Sứ cao cấp 350ml. Họa tiết mèo thủ công trên nền đất nung.", badge:null, bgColor:"#FFE8E8" },
+  { id:6, name:"Nón Bucket PAWGEN", type:"apparel", emoji:"🧢", price:220000, desc:"Chất liệu chống nắng tốt. Thêu logo PAWGEN 3D.", badge:"Limited", bgColor:"#E8F5FF" },
+  { id:7, name:"Keychain Paw Charm", type:"accessory", emoji:"🔑", price:65000, desc:"Hợp kim kẽm mạ vàng. Dấu chân thú cưng siêu cute.", badge:null, bgColor:"#F5E8FF" },
+  { id:8, name:"Gối Tựa Lưng Mochi", type:"homeware", emoji:"🛋️", price:320000, desc:"Gối bông cao su non. In hình Mochi — mèo được cứu hộ đầu tiên của PAWGEN.", badge:"Story", bgColor:"#E8FFF5" },
+  { id:9, name:"Poster Art 'Every Life Counts'", type:"sticker", emoji:"🖼️", price:95000, desc:"A3, in decal cao cấp không thấm nước. Thiết kế tranh nghệ thuật.", badge:null, bgColor:"#FFF0F5" },
 ];
 
 // ===== HELPERS =====
@@ -239,11 +242,28 @@ function approvePet(id) {
   pendingList = getPending(); approvedList = getApproved();
   const idx = pendingList.findIndex(p=>p.id===id);
   if(idx===-1) return;
-  const pet = {...pendingList[idx], status:"approved", approvedTime:new Date().toLocaleString("vi-VN"), id:Date.now()};
+  const raw = pendingList[idx];
+  const pet = {
+    ...raw,
+    // map condition → status field used by trang chủ (urgent/watch/safe)
+    status: raw.condition || "safe",
+    approvedTime: new Date().toLocaleString("vi-VN"),
+    id: Date.now(),
+    // ensure all fields trang chủ cần
+    tags: raw.tags || [],
+    fosterDays: raw.fosterDays || 0,
+    costs: raw.costs || "0 VNĐ",
+    vaccinated: raw.vaccinated || false,
+    neutered: raw.neutered || false,
+    journal: raw.journal || [{ date: new Date().toLocaleDateString("vi-VN"), content: `Được báo cáo bởi ${raw.reporter}. Đã được admin duyệt.` }],
+    desc: raw.desc || "",
+    bgColor: raw.bgColor || "#FFF0E8",
+    emoji: raw.emoji || "🐾",
+  };
   pendingList[idx].status = "approved";
   approvedList.push(pet);
   savePending(pendingList); saveApproved(approvedList); updatePendingBadge();
-  closeModal(); showToast(`✅ Đã duyệt "${pet.name}"!`); navigateTo("pending");
+  closeModal(); showToast(`✅ Đã duyệt "${pet.name}"! Sẽ xuất hiện ngay trên trang chủ.`); navigateTo("pending");
 }
 
 function openRejectModal(id) {
