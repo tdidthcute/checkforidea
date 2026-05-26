@@ -902,7 +902,7 @@ function openDonateQRModal(amt) {
   document.getElementById("dqrMsg").textContent = content;
   const img = document.getElementById("dqrImg");
   img.style.display = "none";
-  img.src = "D:\pj\img\qr.jpg";
+  img.src = "/img/qr.jpg";
   img.onload = () => {
     img.style.display = "block";
   };
@@ -924,7 +924,7 @@ function openDonateQRModal(amt) {
 
 window.copyDonateInfo = function () {
   const modal = document.getElementById("donateQRModal");
-  const text = `Ngân hàng: MB Bank\nSố TK: ${modal._accountNo}\nChủ TK: ${modal._accountName}\nNội dung: ${modal._content}`;
+  const text = `Ngân hàng: TechcomBank\nSố TK: ${modal._accountNo}\nChủ TK: ${modal._accountName}\nNội dung: ${modal._content}`;
   navigator.clipboard.writeText(text).then(
     () => showToast("✅ Đã sao chép thông tin chuyển khoản!"),
     () => showToast(`STK: ${modal._accountNo}`),
