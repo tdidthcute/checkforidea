@@ -1,56 +1,376 @@
-/* ========================================
-   PAWLINK — app.js
-   All interactivity, data, and logic
-======================================== */
-
-// ===== DATA =====
-
 const PETS_DATA = [
-  { id: 1, name: "Mochi", type: "cat", emoji: "🐱", age: "~2 tháng", location: "ĐH Bách Khoa, Q.10", gender: "Cái", status: "urgent", vaccinated: false, neutered: false, fosterDays: 3, desc: "Mochi được phát hiện tại cổng trường trong tình trạng bị thương nhẹ ở chân. Hiện đã được sơ cứu và cần người nuôi tạm gấp. Rất thân thiện và không cắn.", tags: ["Mèo con", "Cần gấp", "Đang điều trị"], bgColor: "#FFF0E8", costs: "320,000 VNĐ" },
-  { id: 2, name: "Bông", type: "dog", emoji: "🐶", age: "~6 tháng", location: "Hẻm Nguyễn Trãi, Q.5", gender: "Đực", status: "safe", vaccinated: true, neutered: false, fosterDays: 14, desc: "Bông là chú chó lai rất năng động và thân thiện. Đã được tiêm vaccine đầy đủ. Hòa đồng với trẻ em và mèo. Tìm gia đình có không gian rộng.", tags: ["Chó con", "Đã vaccine", "Thân thiện"], bgColor: "#E8F0FF", costs: "750,000 VNĐ" },
-  { id: 3, name: "Pudding", type: "cat", emoji: "🐱", age: "~1 năm", location: "Ký túc xá ĐHQG, Thủ Đức", gender: "Cái", status: "watch", vaccinated: true, neutered: true, fosterDays: 7, desc: "Pudding là một cô mèo trắng rất hiền lành. Đã triệt sản và tiêm đủ vaccine. Thích nằm và chơi đùa nhẹ nhàng. Phù hợp với người sống trong căn hộ nhỏ.", tags: ["Đã vaccine", "Đã triệt sản", "Dễ nuôi"], bgColor: "#F0FFE8", costs: "1,100,000 VNĐ" },
-  { id: 4, name: "Caramel", type: "dog", emoji: "🐕", age: "~3 tháng", location: "Công viên Tao Đàn, Q.1", gender: "Cái", status: "safe", vaccinated: false, neutered: false, fosterDays: 5, desc: "Caramel được tìm thấy một mình tại công viên. Tình trạng sức khỏe tốt, chỉ cần người yêu thương và chăm sóc. Rất hiếu động và ham chơi.", tags: ["Chó con", "Sức khỏe tốt", "Năng động"], bgColor: "#FFF8E0", costs: "150,000 VNĐ" },
-  { id: 5, name: "Tàu Hũ", type: "cat", emoji: "😺", age: "~4 tháng", location: "Chợ Bến Thành, Q.1", gender: "Đực", status: "safe", vaccinated: true, neutered: false, fosterDays: 20, desc: "Tàu Hũ (vì màu vàng nhạt như tàu hũ) là chú mèo vô cùng nghịch ngợm. Đã được tiêm vaccine mũi đầu. Cần nhà nuôi có kinh nghiệm với mèo.", tags: ["Đã vaccine 1 mũi", "Nghịch ngợm", "Mèo đực"], bgColor: "#FFF0E8", costs: "450,000 VNĐ" },
-  { id: 6, name: "Luna", type: "cat", emoji: "🐈", age: "~8 tháng", location: "ĐH Kinh tế TP.HCM", gender: "Cái", status: "urgent", vaccinated: false, neutered: false, fosterDays: 1, desc: "Luna mới được báo cáo hôm nay. Đang bị sốt và cần đưa đến phòng khám ngay. Cần người tình nguyện vận chuyển và nuôi tạm gấp.", tags: ["Cần cứu gấp", "Đang ốm", "Khẩn cấp"], bgColor: "#FFEAEA", costs: "0 VNĐ (mới)" },
-  { id: 7, name: "Đậu Phộng", type: "dog", emoji: "🐩", age: "~2 năm", location: "Bình Dương (gần HCM)", gender: "Đực", status: "safe", vaccinated: true, neutered: true, fosterDays: 30, desc: "Đậu Phộng là chú chó trưởng thành rất điềm tĩnh. Đã triệt sản và tiêm đủ vaccine. Không sủa nhiều, thích ngủ và ăn. Phù hợp với người bận rộn.", tags: ["Đã vaccine", "Đã triệt sản", "Điềm tĩnh"], bgColor: "#E8FFF0", costs: "1,500,000 VNĐ" },
-  { id: 8, name: "Oreo", type: "cat", emoji: "🐱", age: "~6 tháng", location: "ĐH Sư Phạm, Q.5", gender: "Đực", status: "watch", vaccinated: true, neutered: false, fosterDays: 10, desc: "Oreo có bộ lông đen trắng giống bánh Oreo. Tính cách vui vẻ, hay kêu meo meo. Đang chờ làm triệt sản. Người nhận nuôi cần ký cam kết triệt sản.", tags: ["Đã vaccine", "Chờ triệt sản", "Vui vẻ"], bgColor: "#F5E8FF", costs: "600,000 VNĐ" },
+  {
+    id: 1,
+    name: "Mochi",
+    type: "cat",
+    emoji: "🐱",
+    age: "~2 tháng",
+    location: "ĐH Bách Khoa, Q.10",
+    gender: "Cái",
+    status: "urgent",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 3,
+    desc: "Mochi được phát hiện tại cổng trường trong tình trạng bị thương nhẹ ở chân. Hiện đã được sơ cứu và cần người nuôi tạm gấp. Rất thân thiện và không cắn.",
+    tags: ["Mèo con", "Cần gấp", "Đang điều trị"],
+    bgColor: "#FFF0E8",
+    costs: "320,000 VNĐ",
+  },
+  {
+    id: 2,
+    name: "Bông",
+    type: "dog",
+    emoji: "🐶",
+    age: "~6 tháng",
+    location: "Hẻm Nguyễn Trãi, Q.5",
+    gender: "Đực",
+    status: "safe",
+    vaccinated: true,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Bông là chú chó lai rất năng động và thân thiện. Đã được tiêm vaccine đầy đủ. Hòa đồng với trẻ em và mèo. Tìm gia đình có không gian rộng.",
+    tags: ["Chó con", "Đã vaccine", "Thân thiện"],
+    bgColor: "#E8F0FF",
+    costs: "750,000 VNĐ",
+  },
+  {
+    id: 3,
+    name: "Pudding",
+    type: "cat",
+    emoji: "🐱",
+    age: "~1 năm",
+    location: "Ký túc xá ĐHQG, Thủ Đức",
+    gender: "Cái",
+    status: "watch",
+    vaccinated: true,
+    neutered: true,
+    fosterDays: 7,
+    desc: "Pudding là một cô mèo trắng rất hiền lành. Đã triệt sản và tiêm đủ vaccine. Thích nằm và chơi đùa nhẹ nhàng. Phù hợp với người sống trong căn hộ nhỏ.",
+    tags: ["Đã vaccine", "Đã triệt sản", "Dễ nuôi"],
+    bgColor: "#F0FFE8",
+    costs: "1,100,000 VNĐ",
+  },
+  {
+    id: 4,
+    name: "Caramel",
+    type: "dog",
+    emoji: "🐕",
+    age: "~3 tháng",
+    location: "Công viên Tao Đàn, Q.1",
+    gender: "Cái",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 5,
+    desc: "Caramel được tìm thấy một mình tại công viên. Tình trạng sức khỏe tốt, chỉ cần người yêu thương và chăm sóc. Rất hiếu động và ham chơi.",
+    tags: ["Chó con", "Sức khỏe tốt", "Năng động"],
+    bgColor: "#FFF8E0",
+    costs: "150,000 VNĐ",
+  },
+  {
+    id: 5,
+    name: "Tàu Hũ",
+    type: "cat",
+    emoji: "😺",
+    age: "~4 tháng",
+    location: "Chợ Bến Thành, Q.1",
+    gender: "Đực",
+    status: "safe",
+    vaccinated: true,
+    neutered: false,
+    fosterDays: 20,
+    desc: "Tàu Hũ (vì màu vàng nhạt như tàu hũ) là chú mèo vô cùng nghịch ngợm. Đã được tiêm vaccine mũi đầu. Cần nhà nuôi có kinh nghiệm với mèo.",
+    tags: ["Đã vaccine 1 mũi", "Nghịch ngợm", "Mèo đực"],
+    bgColor: "#FFF0E8",
+    costs: "450,000 VNĐ",
+  },
+  {
+    id: 6,
+    name: "Luna",
+    type: "cat",
+    emoji: "🐈",
+    age: "~8 tháng",
+    location: "ĐH Kinh tế TP.HCM",
+    gender: "Cái",
+    status: "urgent",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 1,
+    desc: "Luna mới được báo cáo hôm nay. Đang bị sốt và cần đưa đến phòng khám ngay. Cần người tình nguyện vận chuyển và nuôi tạm gấp.",
+    tags: ["Cần cứu gấp", "Đang ốm", "Khẩn cấp"],
+    bgColor: "#FFEAEA",
+    costs: "0 VNĐ (mới)",
+  },
+  {
+    id: 7,
+    name: "Đậu Phộng",
+    type: "dog",
+    emoji: "🐩",
+    age: "~2 năm",
+    location: "Bình Dương (gần HCM)",
+    gender: "Đực",
+    status: "safe",
+    vaccinated: true,
+    neutered: true,
+    fosterDays: 30,
+    desc: "Đậu Phộng là chú chó trưởng thành rất điềm tĩnh. Đã triệt sản và tiêm đủ vaccine. Không sủa nhiều, thích ngủ và ăn. Phù hợp với người bận rộn.",
+    tags: ["Đã vaccine", "Đã triệt sản", "Điềm tĩnh"],
+    bgColor: "#E8FFF0",
+    costs: "1,500,000 VNĐ",
+  },
+  {
+    id: 8,
+    name: "Oreo",
+    type: "cat",
+    emoji: "🐱",
+    age: "~6 tháng",
+    location: "ĐH Sư Phạm, Q.5",
+    gender: "Đực",
+    status: "watch",
+    vaccinated: true,
+    neutered: false,
+    fosterDays: 10,
+    desc: "Oreo có bộ lông đen trắng giống bánh Oreo. Tính cách vui vẻ, hay kêu meo meo. Đang chờ làm triệt sản. Người nhận nuôi cần ký cam kết triệt sản.",
+    tags: ["Đã vaccine", "Chờ triệt sản", "Vui vẻ"],
+    bgColor: "#F5E8FF",
+    costs: "600,000 VNĐ",
+  },
 ];
 
 const MERCH_DATA = [
-  { id: 1, name: "Áo Phông PAWGEN Classic", type: "apparel", emoji: "👕", price: 250000, desc: "Unisex, cotton 100%, in lưới cao cấp. Màu kem & xanh rừng.", badge: "Bán chạy nhất", bgColor: "#E8F0FF" },
-  { id: 2, name: "Hoodie Cứu Hộ Hero", type: "apparel", emoji: "🧥", price: 480000, desc: "Nỉ ấm, có túi kangaroo. In slogan 'Rescue. Foster. Adopt.'", badge: "New", bgColor: "#FFF0E8" },
-  { id: 3, name: "Tote Bag PawPrint", type: "accessory", emoji: "👜", price: 150000, desc: "Canvas dày, 2 quai chắc. In dấu chân thú cưng nghệ thuật.", badge: "Eco", bgColor: "#E8FFE8" },
-  { id: 4, name: "Bộ Sticker PAWGEN Vol.1", type: "sticker", emoji: "🎨", price: 45000, desc: "12 sticker chống nước. Thiết kế chibi mèo chó cute.", badge: "45K", bgColor: "#FFF8E0" },
-  { id: 5, name: "Mug Terracotta Cat", type: "homeware", emoji: "☕", price: 180000, desc: "Sứ cao cấp 350ml. Họa tiết mèo thủ công trên nền đất nung.", badge: null, bgColor: "#FFE8E8" },
-  { id: 6, name: "Nón Bucket PAWGEN", type: "apparel", emoji: "🧢", price: 220000, desc: "Chất liệu chống nắng tốt. Thêu logo PAWGEN 3D.", badge: "Limited", bgColor: "#E8F5FF" },
-  { id: 7, name: "Keychain Paw Charm", type: "accessory", emoji: "🔑", price: 65000, desc: "Hợp kim kẽm mạ vàng. Dấu chân thú cưng siêu cute.", badge: null, bgColor: "#F5E8FF" },
-  { id: 8, name: "Gối Tựa Lưng Mochi", type: "homeware", emoji: "🛋️", price: 320000, desc: "Gối bông cao su non. In hình Mochi — mèo được cứu hộ đầu tiên của PAWGEN.", badge: "Story", bgColor: "#E8FFF5" },
-  { id: 9, name: "Poster Art 'Every Life Counts'", type: "sticker", emoji: "🖼️", price: 95000, desc: "A3, in decal cao cấp không thấm nước. Thiết kế tranh nghệ thuật.", badge: null, bgColor: "#FFF0F5" },
+  {
+    id: 1,
+    name: "Áo Phông PAWGEN Classic",
+    type: "apparel",
+    emoji: "👕",
+    price: 250000,
+    desc: "Unisex, cotton 100%, in lưới cao cấp. Màu kem & xanh rừng.",
+    badge: "Bán chạy nhất",
+    bgColor: "#E8F0FF",
+  },
+  {
+    id: 2,
+    name: "Hoodie Cứu Hộ Hero",
+    type: "apparel",
+    emoji: "🧥",
+    price: 480000,
+    desc: "Nỉ ấm, có túi kangaroo. In slogan 'Rescue. Foster. Adopt.'",
+    badge: "New",
+    bgColor: "#FFF0E8",
+  },
+  {
+    id: 3,
+    name: "Tote Bag PawPrint",
+    type: "accessory",
+    emoji: "👜",
+    price: 150000,
+    desc: "Canvas dày, 2 quai chắc. In dấu chân thú cưng nghệ thuật.",
+    badge: "Eco",
+    bgColor: "#E8FFE8",
+  },
+  {
+    id: 4,
+    name: "Bộ Sticker PAWGEN Vol.1",
+    type: "sticker",
+    emoji: "🎨",
+    price: 45000,
+    desc: "12 sticker chống nước. Thiết kế chibi mèo chó cute.",
+    badge: "45K",
+    bgColor: "#FFF8E0",
+  },
+  {
+    id: 5,
+    name: "Mug Terracotta Cat",
+    type: "homeware",
+    emoji: "☕",
+    price: 180000,
+    desc: "Sứ cao cấp 350ml. Họa tiết mèo thủ công trên nền đất nung.",
+    badge: null,
+    bgColor: "#FFE8E8",
+  },
+  {
+    id: 6,
+    name: "Nón Bucket PAWGEN",
+    type: "apparel",
+    emoji: "🧢",
+    price: 220000,
+    desc: "Chất liệu chống nắng tốt. Thêu logo PAWGEN 3D.",
+    badge: "Limited",
+    bgColor: "#E8F5FF",
+  },
+  {
+    id: 7,
+    name: "Keychain Paw Charm",
+    type: "accessory",
+    emoji: "🔑",
+    price: 65000,
+    desc: "Hợp kim kẽm mạ vàng. Dấu chân thú cưng siêu cute.",
+    badge: null,
+    bgColor: "#F5E8FF",
+  },
+  {
+    id: 8,
+    name: "Gối Tựa Lưng Mochi",
+    type: "homeware",
+    emoji: "🛋️",
+    price: 320000,
+    desc: "Gối bông cao su non. In hình Mochi — mèo được cứu hộ đầu tiên của PAWGEN.",
+    badge: "Story",
+    bgColor: "#E8FFF5",
+  },
+  {
+    id: 9,
+    name: "Poster Art 'Every Life Counts'",
+    type: "sticker",
+    emoji: "🖼️",
+    price: 95000,
+    desc: "A3, in decal cao cấp không thấm nước. Thiết kế tranh nghệ thuật.",
+    badge: null,
+    bgColor: "#FFF0F5",
+  },
 ];
 
 const DONORS_DATA = [
-  { name: "Minh Anh N.", avatar: "🌸", case: "Quỹ thú y chung", amount: "500,000đ", time: "5 phút trước" },
-  { name: "Trường H.", avatar: "🌟", case: "Cứu hộ Luna", amount: "200,000đ", time: "12 phút trước" },
-  { name: "Phương L.", avatar: "🎀", case: "Quỹ thức ăn", amount: "100,000đ", time: "28 phút trước" },
-  { name: "Anonymous", avatar: "🐾", case: "Bất kỳ case cần nhất", amount: "1,000,000đ", time: "1 giờ trước" },
-  { name: "Khoa B.", avatar: "⭐", case: "Cứu hộ Mochi", amount: "150,000đ", time: "2 giờ trước" },
+  {
+    name: "Minh Anh N.",
+    avatar: "🌸",
+    case: "Quỹ thú y chung",
+    amount: "500,000đ",
+    time: "5 phút trước",
+  },
+  {
+    name: "Trường H.",
+    avatar: "🌟",
+    case: "Cứu hộ Luna",
+    amount: "200,000đ",
+    time: "12 phút trước",
+  },
+  {
+    name: "Phương L.",
+    avatar: "🎀",
+    case: "Quỹ thức ăn",
+    amount: "100,000đ",
+    time: "28 phút trước",
+  },
+  {
+    name: "Anonymous",
+    avatar: "🐾",
+    case: "Bất kỳ case cần nhất",
+    amount: "1,000,000đ",
+    time: "1 giờ trước",
+  },
+  {
+    name: "Khoa B.",
+    avatar: "⭐",
+    case: "Cứu hộ Mochi",
+    amount: "150,000đ",
+    time: "2 giờ trước",
+  },
 ];
 
 const CASES_DATA = [
-  { id: "PL-001", pet: "🐱 Mochi", location: "ĐH Bách Khoa", reporter: "Sinh viên K20", status: "urgent", step: "Điều trị thú y", time: "2 giờ trước" },
-  { id: "PL-002", pet: "🐶 Bông", location: "Nguyễn Trãi Q.5", reporter: "Linh T.", status: "green", step: "Chờ nhận nuôi", time: "1 ngày trước" },
-  { id: "PL-003", pet: "🐱 Luna", location: "ĐH Kinh Tế", reporter: "Hùng P.", status: "urgent", step: "Chờ vận chuyển", time: "30 phút trước" },
-  { id: "PL-004", pet: "🐕 Caramel", location: "Tao Đàn Q.1", reporter: "Mai N.", status: "yellow", step: "Nuôi tạm", time: "3 ngày trước" },
-  { id: "PL-005", pet: "😺 Tàu Hũ", location: "Chợ Bến Thành", reporter: "Hà P.", status: "blue", step: "Đã có người nhận", time: "5 ngày trước" },
-  { id: "PL-006", pet: "🐈 Pudding", location: "ĐHQG Thủ Đức", reporter: "Khoa B.", status: "yellow", step: "Nuôi tạm", time: "1 tuần trước" },
+  {
+    id: "PL-001",
+    pet: "🐱 Mochi",
+    location: "ĐH Bách Khoa",
+    reporter: "Sinh viên K20",
+    status: "urgent",
+    step: "Điều trị thú y",
+    time: "2 giờ trước",
+  },
+  {
+    id: "PL-002",
+    pet: "🐶 Bông",
+    location: "Nguyễn Trãi Q.5",
+    reporter: "Linh T.",
+    status: "green",
+    step: "Chờ nhận nuôi",
+    time: "1 ngày trước",
+  },
+  {
+    id: "PL-003",
+    pet: "🐱 Luna",
+    location: "ĐH Kinh Tế",
+    reporter: "Hùng P.",
+    status: "urgent",
+    step: "Chờ vận chuyển",
+    time: "30 phút trước",
+  },
+  {
+    id: "PL-004",
+    pet: "🐕 Caramel",
+    location: "Tao Đàn Q.1",
+    reporter: "Mai N.",
+    status: "yellow",
+    step: "Nuôi tạm",
+    time: "3 ngày trước",
+  },
+  {
+    id: "PL-005",
+    pet: "😺 Tàu Hũ",
+    location: "Chợ Bến Thành",
+    reporter: "Hà P.",
+    status: "blue",
+    step: "Đã có người nhận",
+    time: "5 ngày trước",
+  },
+  {
+    id: "PL-006",
+    pet: "🐈 Pudding",
+    location: "ĐHQG Thủ Đức",
+    reporter: "Khoa B.",
+    status: "yellow",
+    step: "Nuôi tạm",
+    time: "1 tuần trước",
+  },
 ];
 
 const FOSTERS_DATA = [
-  { name: "Nguyễn Minh Anh", area: "Quận 10", type: "Mèo", rating: 5, current: 1, max: 2, avatar: "🌸" },
-  { name: "Trần Hoàng Hùng", area: "Thủ Đức", type: "Chó + Mèo", rating: 5, current: 0, max: 1, avatar: "🌟" },
-  { name: "Lê Phương Linh", area: "Quận 3", type: "Mèo", rating: 4, current: 2, max: 2, avatar: "🎀" },
-  { name: "Phạm Văn Khoa", area: "Bình Thạnh", type: "Chó", rating: 5, current: 1, max: 3, avatar: "⭐" },
-  { name: "Võ Thị Mai", area: "Quận 7", type: "Mèo", rating: 4, current: 0, max: 2, avatar: "🌺" },
+  {
+    name: "Nguyễn Minh Anh",
+    area: "Quận 10",
+    type: "Mèo",
+    rating: 5,
+    current: 1,
+    max: 2,
+    avatar: "🌸",
+  },
+  {
+    name: "Trần Hoàng Hùng",
+    area: "Thủ Đức",
+    type: "Chó + Mèo",
+    rating: 5,
+    current: 0,
+    max: 1,
+    avatar: "🌟",
+  },
+  {
+    name: "Lê Phương Linh",
+    area: "Quận 3",
+    type: "Mèo",
+    rating: 4,
+    current: 2,
+    max: 2,
+    avatar: "🎀",
+  },
+  {
+    name: "Phạm Văn Khoa",
+    area: "Bình Thạnh",
+    type: "Chó",
+    rating: 5,
+    current: 1,
+    max: 3,
+    avatar: "⭐",
+  },
+  {
+    name: "Võ Thị Mai",
+    area: "Quận 7",
+    type: "Mèo",
+    rating: 4,
+    current: 0,
+    max: 2,
+    avatar: "🌺",
+  },
 ];
 
 // Cart state
@@ -88,13 +408,22 @@ function initNavbar() {
     else navbar.classList.remove("scrolled");
 
     // Active link
-    const sections = ["hero", "adopt", "rescue", "foster", "volunteer", "dashboard", "donate", "merch"];
-    sections.forEach(id => {
+    const sections = [
+      "hero",
+      "adopt",
+      "rescue",
+      "foster",
+      "volunteer",
+      "dashboard",
+      "donate",
+      "merch",
+    ];
+    sections.forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       const rect = el.getBoundingClientRect();
       if (rect.top <= 100 && rect.bottom >= 100) {
-        links.forEach(l => l.classList.remove("active"));
+        links.forEach((l) => l.classList.remove("active"));
         const activeLink = document.querySelector(`[data-section="${id}"]`);
         if (activeLink) activeLink.classList.add("active");
       }
@@ -135,16 +464,19 @@ function initFloatingPaws() {
 // ===== COUNTER ANIMATION =====
 function initCounters() {
   const counters = document.querySelectorAll(".stat-num[data-target]");
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateCounter(entry.target);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.5 });
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.5 },
+  );
 
-  counters.forEach(c => observer.observe(c));
+  counters.forEach((c) => observer.observe(c));
 }
 
 function animateCounter(el) {
@@ -174,8 +506,10 @@ function initPetsGrid() {
   try {
     const adminPets = JSON.parse(localStorage.getItem("pawlink_pets") || "[]");
     if (adminPets.length > 0) {
-      adminPets.forEach(p => {
-        const idx = PETS_DATA.findIndex(existing => Number(existing.id) === Number(p.id));
+      adminPets.forEach((p) => {
+        const idx = PETS_DATA.findIndex(
+          (existing) => Number(existing.id) === Number(p.id),
+        );
         if (idx !== -1) {
           PETS_DATA[idx] = p; // cập nhật pet đã có
         } else {
@@ -191,24 +525,27 @@ function renderPets(filter) {
   const grid = document.getElementById("petsGrid");
   let pets = PETS_DATA;
 
-  if (filter === "cat") pets = pets.filter(p => p.type === "cat");
-  else if (filter === "dog") pets = pets.filter(p => p.type === "dog");
-  else if (filter === "urgent") pets = pets.filter(p => p.status === "urgent");
-  else if (filter === "vaccinated") pets = pets.filter(p => p.vaccinated);
+  if (filter === "cat") pets = pets.filter((p) => p.type === "cat");
+  else if (filter === "dog") pets = pets.filter((p) => p.type === "dog");
+  else if (filter === "urgent")
+    pets = pets.filter((p) => p.status === "urgent");
+  else if (filter === "vaccinated") pets = pets.filter((p) => p.vaccinated);
 
-  grid.innerHTML = pets.map(p => `
+  grid.innerHTML = pets
+    .map(
+      (p) => `
     <div class="pet-adopt-card" onclick="openPetModal(${p.id})">
       <div class="pet-adopt-img" style="background:${p.bgColor}">
         <span>${p.emoji}</span>
-        <span class="tag tag-${p.status === 'urgent' ? 'urgent' : p.status === 'watch' ? 'watch' : 'safe'}" style="position:absolute;top:12px;left:12px">
-          ${p.status === 'urgent' ? '🔴 Cần gấp' : p.status === 'watch' ? '🟡 Theo dõi' : '🟢 An toàn'}
+        <span class="tag tag-${p.status === "urgent" ? "urgent" : p.status === "watch" ? "watch" : "safe"}" style="position:absolute;top:12px;left:12px">
+          ${p.status === "urgent" ? "🔴 Cần gấp" : p.status === "watch" ? "🟡 Theo dõi" : "🟢 An toàn"}
         </span>
       </div>
       <div class="pet-adopt-body">
         <div class="pet-adopt-name">${p.name}</div>
         <div class="pet-adopt-meta">${p.gender} · ${p.age} · ${p.location}</div>
         <div class="pet-adopt-tags">
-          ${p.tags.map(t => `<span class="pet-tag">${t}</span>`).join("")}
+          ${p.tags.map((t) => `<span class="pet-tag">${t}</span>`).join("")}
         </div>
         <div class="pet-adopt-footer">
           <span class="pet-foster-time">Nuôi tạm: ${p.fosterDays} ngày</span>
@@ -216,13 +553,17 @@ function renderPets(filter) {
         </div>
       </div>
     </div>
-  `).join("");
+  `,
+    )
+    .join("");
 }
 
 function initFilterBtns() {
-  document.querySelectorAll(".filter-btn[data-filter]").forEach(btn => {
+  document.querySelectorAll(".filter-btn[data-filter]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".filter-btn[data-filter]").forEach(b => b.classList.remove("active"));
+      document
+        .querySelectorAll(".filter-btn[data-filter]")
+        .forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       currentFilter = btn.dataset.filter;
       renderPets(currentFilter);
@@ -236,7 +577,7 @@ function showMorePets() {
 
 // ===== PET MODAL =====
 function openPetModal(id) {
-  const pet = PETS_DATA.find(p => p.id === id);
+  const pet = PETS_DATA.find((p) => p.id === id);
   if (!pet) return;
 
   document.getElementById("petModalContent").innerHTML = `
@@ -246,11 +587,11 @@ function openPetModal(id) {
       </div>
       <div class="pet-modal-info">
         <div class="pet-modal-tags">
-          <span class="tag tag-${pet.status === 'urgent' ? 'urgent' : pet.status === 'watch' ? 'watch' : 'safe'}">
-            ${pet.status === 'urgent' ? '🔴 Cần gấp' : pet.status === 'watch' ? '🟡 Theo dõi' : '🟢 An toàn'}
+          <span class="tag tag-${pet.status === "urgent" ? "urgent" : pet.status === "watch" ? "watch" : "safe"}">
+            ${pet.status === "urgent" ? "🔴 Cần gấp" : pet.status === "watch" ? "🟡 Theo dõi" : "🟢 An toàn"}
           </span>
           ${pet.vaccinated ? '<span class="pet-tag">💉 Đã vaccine</span>' : '<span class="pet-tag">Chưa vaccine</span>'}
-          ${pet.neutered ? '<span class="pet-tag">✂️ Đã triệt sản</span>' : ''}
+          ${pet.neutered ? '<span class="pet-tag">✂️ Đã triệt sản</span>' : ""}
         </div>
         <h2 class="pet-adopt-name" style="font-size:2rem">${pet.name}</h2>
         <div class="pet-adopt-meta" style="margin-bottom:1rem">${pet.gender} · ${pet.age} · ${pet.location}</div>
@@ -258,7 +599,7 @@ function openPetModal(id) {
         <div class="pet-modal-stats">
           <div class="pet-stat"><div class="pet-stat-label">Thời gian nuôi tạm</div><div class="pet-stat-val">${pet.fosterDays} ngày</div></div>
           <div class="pet-stat"><div class="pet-stat-label">Chi phí đã dùng</div><div class="pet-stat-val">${pet.costs}</div></div>
-          <div class="pet-stat"><div class="pet-stat-label">Loài</div><div class="pet-stat-val">${pet.type === 'cat' ? '🐱 Mèo' : '🐶 Chó'}</div></div>
+          <div class="pet-stat"><div class="pet-stat-label">Loài</div><div class="pet-stat-val">${pet.type === "cat" ? "🐱 Mèo" : "🐶 Chó"}</div></div>
           <div class="pet-stat"><div class="pet-stat-label">Giới tính</div><div class="pet-stat-val">${pet.gender}</div></div>
         </div>
         <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
@@ -274,7 +615,9 @@ function openPetModal(id) {
 
 function handleAdopt(name) {
   closeModal("petModal");
-  showToast(`✅ Đăng ký nhận nuôi ${name} thành công! Chúng mình sẽ liên hệ bạn trong 24h.`);
+  showToast(
+    `✅ Đăng ký nhận nuôi ${name} thành công! Chúng mình sẽ liên hệ bạn trong 24h.`,
+  );
 }
 
 function handleDonate(name) {
@@ -294,14 +637,18 @@ function renderMerch(filter) {
   // Đọc merch từ admin localStorage, fallback về MERCH_DATA cứng
   let allMerch = MERCH_DATA;
   try {
-    const adminMerch = JSON.parse(localStorage.getItem("pawgen_merch") || "null");
+    const adminMerch = JSON.parse(
+      localStorage.getItem("pawgen_merch") || "null",
+    );
     if (adminMerch && adminMerch.length > 0) allMerch = adminMerch;
-  } catch(e) {}
+  } catch (e) {}
 
   let items = allMerch;
-  if (filter !== "all") items = items.filter(m => m.type === filter);
+  if (filter !== "all") items = items.filter((m) => m.type === filter);
 
-  grid.innerHTML = items.map(m => `
+  grid.innerHTML = items
+    .map(
+      (m) => `
     <div class="merch-card">
       <div class="merch-img" style="background:${m.bgColor}">
         <span>${m.emoji}</span>
@@ -316,13 +663,17 @@ function renderMerch(filter) {
         </div>
       </div>
     </div>
-  `).join("");
+  `,
+    )
+    .join("");
 }
 
 function initMerchFilterBtns() {
-  document.querySelectorAll(".filter-btn[data-mfilter]").forEach(btn => {
+  document.querySelectorAll(".filter-btn[data-mfilter]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".filter-btn[data-mfilter]").forEach(b => b.classList.remove("active"));
+      document
+        .querySelectorAll(".filter-btn[data-mfilter]")
+        .forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       currentMerchFilter = btn.dataset.mfilter;
       renderMerch(currentMerchFilter);
@@ -334,13 +685,15 @@ function initMerchFilterBtns() {
 function addToCart(id) {
   let allMerch = MERCH_DATA;
   try {
-    const adminMerch = JSON.parse(localStorage.getItem("pawgen_merch") || "null");
+    const adminMerch = JSON.parse(
+      localStorage.getItem("pawgen_merch") || "null",
+    );
     if (adminMerch && adminMerch.length > 0) allMerch = adminMerch;
-  } catch(e) {}
-  const item = allMerch.find(m => Number(m.id) === Number(id));
+  } catch (e) {}
+  const item = allMerch.find((m) => Number(m.id) === Number(id));
   if (!item) return;
 
-  const existing = cart.find(c => c.id === id);
+  const existing = cart.find((c) => c.id === id);
   if (existing) existing.qty++;
   else cart.push({ ...item, qty: 1 });
 
@@ -369,7 +722,9 @@ function openCart() {
     content.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--mid-gray)">🛒 Giỏ hàng trống<br/>Hãy chọn một vài món từ Merch Shop nhé!</div>`;
     footer.innerHTML = "";
   } else {
-    content.innerHTML = cart.map(item => `
+    content.innerHTML = cart
+      .map(
+        (item) => `
       <div class="cart-item">
         <div class="cart-item-emoji">${item.emoji}</div>
         <div class="cart-item-info">
@@ -385,7 +740,9 @@ function openCart() {
           ${formatPrice(item.price * item.qty)}
         </div>
       </div>
-    `).join("");
+    `,
+      )
+      .join("");
 
     const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
     const donate30 = Math.round(total * 0.3);
@@ -405,10 +762,10 @@ function openCart() {
 }
 
 function changeQty(id, delta) {
-  const item = cart.find(c => c.id === id);
+  const item = cart.find((c) => c.id === id);
   if (!item) return;
   item.qty += delta;
-  if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+  if (item.qty <= 0) cart = cart.filter((c) => c.id !== id);
   updateCartFloat();
   openCart(); // re-render
 }
@@ -427,7 +784,8 @@ function formatPrice(n) {
 // ===== DONORS =====
 function initDonors() {
   const list = document.getElementById("donorList");
-  list.innerHTML = DONORS_DATA.map(d => `
+  list.innerHTML = DONORS_DATA.map(
+    (d) => `
     <div class="donor-item">
       <div class="donor-avatar">${d.avatar}</div>
       <div class="donor-info">
@@ -436,7 +794,8 @@ function initDonors() {
       </div>
       <div class="donor-amount">${d.amount}</div>
     </div>
-  `).join("");
+  `,
+  ).join("");
 }
 
 // ===== DONATE AMOUNTS =====
@@ -452,12 +811,12 @@ function initDonateAmounts() {
     50000: "1 buổi khám thú y",
     100000: "1 liều vaccine cơ bản",
     200000: "Thức ăn cho 1 tuần nuôi tạm",
-    500000: "1 ca phẫu thuật nhỏ"
+    500000: "1 ca phẫu thuật nhỏ",
   };
 
-  btns.forEach(btn => {
+  btns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      btns.forEach(b => b.classList.remove("active"));
+      btns.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       customInput.value = "";
       const amt = parseInt(btn.dataset.amt);
@@ -466,7 +825,7 @@ function initDonateAmounts() {
   });
 
   customInput.addEventListener("input", () => {
-    btns.forEach(b => b.classList.remove("active"));
+    btns.forEach((b) => b.classList.remove("active"));
     const val = parseInt(customInput.value) || 0;
     if (val > 0) {
       impact.innerHTML = `✨ ${formatPrice(val)} = Cảm ơn tấm lòng của bạn! 💝`;
@@ -478,7 +837,10 @@ function initDonateAmounts() {
     const customVal = parseInt(customInput.value);
     const amt = customVal || (activeBtn ? parseInt(activeBtn.dataset.amt) : 0);
 
-    if (!amt) { showToast("⚠️ Vui lòng chọn hoặc nhập số tiền donate!"); return; }
+    if (!amt) {
+      showToast("⚠️ Vui lòng chọn hoặc nhập số tiền donate!");
+      return;
+    }
 
     openDonateQRModal(amt);
   });
@@ -487,10 +849,10 @@ function initDonateAmounts() {
 // ===== DONATE QR MODAL =====
 function openDonateQRModal(amt) {
   // ===== CẬP NHẬT THÔNG TIN NGÂN HÀNG TẠI ĐÂY =====
-  const BANK_NAME    = "TechcomBank";          // Tên ngân hàng (VD: Vietcombank, MB Bank, Techcombank...)
-  const BANK_CODE    = "TCB";               // Mã ngân hàng cho VietQR (MB, VCB, TCB, ACB, BIDV, VTB...)
-  const ACCOUNT_NO   = "19075401204017";       // ← ĐỔI THÀNH SỐ TK CỦA BẠN
-  const ACCOUNT_NAME = "QUY CUU HO PAWGEN"; // ← ĐỔI THÀNH TÊN CHỦ TK (viết hoa không dấu)
+  const BANK_NAME = "TechcomBank";
+  const BANK_CODE = "TCB";
+  const ACCOUNT_NO = "19075401204017";
+  const ACCOUNT_NAME = "QUY CUU HO PAWGEN";
   // =====================================================
   const content = `Donate PAWGEN ${amt}`;
 
@@ -529,7 +891,9 @@ function openDonateQRModal(amt) {
         <p style="font-size:0.72rem;color:var(--mid-gray);margin-top:1rem">✅ 100% số tiền vào quỹ cứu hộ PAWGEN. Cảm ơn bạn rất nhiều! 🐾</p>
       </div>
     `;
-    modal.addEventListener("click", e => { if (e.target === modal) closeModal("donateQRModal"); });
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal("donateQRModal");
+    });
     document.body.appendChild(modal);
   }
 
@@ -538,11 +902,16 @@ function openDonateQRModal(amt) {
   document.getElementById("dqrMsg").textContent = content;
   const img = document.getElementById("dqrImg");
   img.style.display = "none";
-  img.src = vietQRUrl;
-  img.onload = () => { img.style.display = "block"; };
+  img.src = "D:\pj\img\qr.jpg";
+  img.onload = () => {
+    img.style.display = "block";
+  };
   img.onerror = () => {
     img.style.display = "none";
-    img.insertAdjacentHTML("afterend", `<div style="padding:1rem;color:var(--mid-gray);font-size:0.82rem">⚠️ Không tải được QR. Vui lòng chuyển khoản theo thông tin bên dưới.</div>`);
+    img.insertAdjacentHTML(
+      "afterend",
+      `<div style="padding:1rem;color:var(--mid-gray);font-size:0.82rem">⚠️ Không tải được QR. Vui lòng chuyển khoản theo thông tin bên dưới.</div>`,
+    );
   };
 
   // store for copy
@@ -553,12 +922,12 @@ function openDonateQRModal(amt) {
   openModal("donateQRModal");
 }
 
-window.copyDonateInfo = function() {
+window.copyDonateInfo = function () {
   const modal = document.getElementById("donateQRModal");
   const text = `Ngân hàng: MB Bank\nSố TK: ${modal._accountNo}\nChủ TK: ${modal._accountName}\nNội dung: ${modal._content}`;
   navigator.clipboard.writeText(text).then(
     () => showToast("✅ Đã sao chép thông tin chuyển khoản!"),
-    () => showToast(`STK: ${modal._accountNo}`)
+    () => showToast(`STK: ${modal._accountNo}`),
   );
 };
 
@@ -568,9 +937,11 @@ function initDashboard() {
 }
 
 function initDashTabs() {
-  document.querySelectorAll(".dash-tab").forEach(tab => {
+  document.querySelectorAll(".dash-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
-      document.querySelectorAll(".dash-tab").forEach(t => t.classList.remove("active"));
+      document
+        .querySelectorAll(".dash-tab")
+        .forEach((t) => t.classList.remove("active"));
       tab.classList.add("active");
       currentDashTab = tab.dataset.tab;
       renderDashboard(currentDashTab);
@@ -609,12 +980,29 @@ function renderDashboard(tab) {
         <div class="dash-chart-box">
           <h4>📊 Số ca cứu hộ theo tháng</h4>
           <div class="bar-chart">
-            ${[{m:"T1",v:28},{m:"T2",v:35},{m:"T3",v:42},{m:"T4",v:38},{m:"T5",v:55},{m:"T6",v:48},{m:"T7",v:62},{m:"T8",v:71},{m:"T9",v:59},{m:"T10",v:78},{m:"T11",v:84},{m:"T12",v:91}].map(b => `
+            ${[
+              { m: "T1", v: 28 },
+              { m: "T2", v: 35 },
+              { m: "T3", v: 42 },
+              { m: "T4", v: 38 },
+              { m: "T5", v: 55 },
+              { m: "T6", v: 48 },
+              { m: "T7", v: 62 },
+              { m: "T8", v: 71 },
+              { m: "T9", v: 59 },
+              { m: "T10", v: 78 },
+              { m: "T11", v: 84 },
+              { m: "T12", v: 91 },
+            ]
+              .map(
+                (b) => `
               <div class="bar-group">
-                <div class="bar" style="height:${(b.v/91)*100}%" title="${b.v} ca"></div>
+                <div class="bar" style="height:${(b.v / 91) * 100}%" title="${b.v} ca"></div>
                 <span class="bar-label">${b.m}</span>
               </div>
-            `).join("")}
+            `,
+              )
+              .join("")}
           </div>
         </div>
         <div class="dash-chart-box">
@@ -629,9 +1017,7 @@ function renderDashboard(tab) {
         </div>
       </div>
     `;
-  }
-
-  else if (tab === "cases") {
+  } else if (tab === "cases") {
     content.innerHTML = `
       <div style="overflow-x:auto">
         <table class="cases-table">
@@ -648,15 +1034,16 @@ function renderDashboard(tab) {
             </tr>
           </thead>
           <tbody>
-            ${CASES_DATA.map(c => `
+            ${CASES_DATA.map(
+              (c) => `
               <tr>
                 <td><span style="font-family:var(--font-mono);font-size:0.8rem">${c.id}</span></td>
                 <td>${c.pet}</td>
                 <td style="font-size:0.82rem;color:var(--mid-gray)">${c.location}</td>
                 <td style="font-size:0.82rem">${c.reporter}</td>
                 <td>
-                  <span class="status-badge status-${c.status === 'urgent' ? 'red' : c.status === 'yellow' ? 'yellow' : c.status === 'blue' ? 'blue' : 'green'}">
-                    ${c.status === 'urgent' ? '🔴 Khẩn cấp' : c.status === 'yellow' ? '🟡 Theo dõi' : c.status === 'blue' ? '🔵 Hoàn tất' : '🟢 Ổn định'}
+                  <span class="status-badge status-${c.status === "urgent" ? "red" : c.status === "yellow" ? "yellow" : c.status === "blue" ? "blue" : "green"}">
+                    ${c.status === "urgent" ? "🔴 Khẩn cấp" : c.status === "yellow" ? "🟡 Theo dõi" : c.status === "blue" ? "🔵 Hoàn tất" : "🟢 Ổn định"}
                   </span>
                 </td>
                 <td style="font-size:0.82rem">${c.step}</td>
@@ -665,17 +1052,17 @@ function renderDashboard(tab) {
                   <button onclick="showToast('📋 Xem chi tiết case ${c.id}')" style="padding:0.3rem 0.7rem;background:var(--terracotta);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:var(--font-body)">Xem</button>
                 </td>
               </tr>
-            `).join("")}
+            `,
+            ).join("")}
           </tbody>
         </table>
       </div>
     `;
-  }
-
-  else if (tab === "fosters") {
+  } else if (tab === "fosters") {
     content.innerHTML = `
       <div class="pets-grid">
-        ${FOSTERS_DATA.map(f => `
+        ${FOSTERS_DATA.map(
+          (f) => `
           <div class="foster-card" style="text-align:left">
             <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
               <div style="width:48px;height:48px;border-radius:50%;background:var(--cream-2);display:flex;align-items:center;justify-content:center;font-size:1.5rem">${f.avatar}</div>
@@ -688,18 +1075,22 @@ function renderDashboard(tab) {
             <div style="background:var(--cream);border-radius:8px;padding:0.75rem;margin-bottom:1rem">
               <div style="font-size:0.78rem;color:var(--mid-gray);margin-bottom:0.25rem">Sức chứa hiện tại</div>
               <div style="display:flex;gap:0.35rem">
-                ${Array.from({length:f.max}).map((_,i) => `<div style="width:24px;height:24px;border-radius:50%;background:${i<f.current?'var(--terracotta)':'var(--light-gray)'};display:flex;align-items:center;justify-content:center;font-size:0.8rem">${i<f.current?'🐾':''}</div>`).join("")}
+                ${Array.from({ length: f.max })
+                  .map(
+                    (_, i) =>
+                      `<div style="width:24px;height:24px;border-radius:50%;background:${i < f.current ? "var(--terracotta)" : "var(--light-gray)"};display:flex;align-items:center;justify-content:center;font-size:0.8rem">${i < f.current ? "🐾" : ""}</div>`,
+                  )
+                  .join("")}
               </div>
               <div style="font-size:0.78rem;margin-top:0.25rem">${f.current}/${f.max} chỗ đang dùng</div>
             </div>
             <button onclick="showToast('📞 Liên hệ ${f.name} để giao thú cưng!')" class="btn-outline" style="width:100%;justify-content:center;padding:0.5rem;font-size:0.82rem">Liên hệ foster</button>
           </div>
-        `).join("")}
+        `,
+        ).join("")}
       </div>
     `;
-  }
-
-  else if (tab === "campus") {
+  } else if (tab === "campus") {
     content.innerHTML = `
       <div style="background:var(--cream);border-radius:var(--radius-md);padding:3rem;text-align:center">
         <div style="font-size:4rem;margin-bottom:1rem">🗺️</div>
@@ -707,19 +1098,23 @@ function renderDashboard(tab) {
         <p style="color:var(--mid-gray);margin-bottom:2rem">Hiển thị phân bổ động vật bị bỏ rơi tại các trường đại học đối tác.</p>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:600px;margin:0 auto">
           ${[
-            { uni:"ĐH Bách Khoa", count:8, color:"var(--red-urgent)" },
-            { uni:"ĐH KHTN", count:3, color:"var(--yellow-watch)" },
-            { uni:"ĐH Kinh Tế", count:5, color:"var(--red-urgent)" },
-            { uni:"ĐH Sư Phạm", count:2, color:"var(--green-safe)" },
-            { uni:"ĐHQG Thủ Đức", count:11, color:"var(--red-urgent)" },
-            { uni:"ĐH Văn Lang", count:1, color:"var(--green-safe)" },
-          ].map(u => `
+            { uni: "ĐH Bách Khoa", count: 8, color: "var(--red-urgent)" },
+            { uni: "ĐH KHTN", count: 3, color: "var(--yellow-watch)" },
+            { uni: "ĐH Kinh Tế", count: 5, color: "var(--red-urgent)" },
+            { uni: "ĐH Sư Phạm", count: 2, color: "var(--green-safe)" },
+            { uni: "ĐHQG Thủ Đức", count: 11, color: "var(--red-urgent)" },
+            { uni: "ĐH Văn Lang", count: 1, color: "var(--green-safe)" },
+          ]
+            .map(
+              (u) => `
             <div style="background:var(--white);border-radius:var(--radius-sm);padding:1rem;border-left:4px solid ${u.color}">
               <div style="font-size:0.8rem;font-weight:700;margin-bottom:0.25rem">${u.uni}</div>
               <div style="font-size:1.5rem;font-weight:900;font-family:var(--font-display);color:${u.color}">${u.count}</div>
               <div style="font-size:0.7rem;color:var(--mid-gray)">case đang xử lý</div>
             </div>
-          `).join("")}
+          `,
+            )
+            .join("")}
         </div>
         <button onclick="showToast('🗺️ Tính năng bản đồ interactive đang phát triển!')" class="btn-primary" style="margin-top:2rem">Mở bản đồ đầy đủ</button>
       </div>
@@ -730,22 +1125,26 @@ function renderDashboard(tab) {
 // ===== FORMS =====
 function initForms() {
   // Rescue form
-  document.getElementById("rescueForm").addEventListener("submit", e => {
+  document.getElementById("rescueForm").addEventListener("submit", (e) => {
     e.preventDefault();
     closeModal("rescueModal");
-    showToast("🚨 Báo cáo cứu hộ đã được gửi! Volunteer sẽ liên hệ bạn trong 15 phút.");
+    showToast(
+      "🚨 Báo cáo cứu hộ đã được gửi! Volunteer sẽ liên hệ bạn trong 15 phút.",
+    );
     e.target.reset();
   });
 
   // Foster form
-  document.getElementById("fosterForm").addEventListener("submit", e => {
+  document.getElementById("fosterForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    showToast("🏠 Đăng ký nuôi tạm thành công! Chúng mình sẽ liên hệ trong 24h.");
+    showToast(
+      "🏠 Đăng ký nuôi tạm thành công! Chúng mình sẽ liên hệ trong 24h.",
+    );
     e.target.reset();
   });
 
   // Volunteer form
-  document.getElementById("volunteerForm").addEventListener("submit", e => {
+  document.getElementById("volunteerForm").addEventListener("submit", (e) => {
     e.preventDefault();
     closeModal("volunteerModal");
     showToast("✅ Đơn đăng ký tình nguyện đã được gửi! Cảm ơn bạn rất nhiều!");
@@ -772,7 +1171,7 @@ function initUploadZone() {
           <div style="text-align:left">
             <div style="color:var(--forest-light);font-weight:600">✅ Đã tải ảnh</div>
             <div style="font-size:0.78rem;color:var(--mid-gray);margin-top:0.2rem">${file.name}</div>
-            <div style="font-size:0.72rem;color:var(--mid-gray)">${(file.size/1024).toFixed(1)} KB</div>
+            <div style="font-size:0.72rem;color:var(--mid-gray)">${(file.size / 1024).toFixed(1)} KB</div>
             <button type="button" onclick="resetUploadZone()" style="margin-top:0.4rem;padding:0.2rem 0.6rem;font-size:0.72rem;background:none;border:1px solid var(--light-gray);border-radius:6px;cursor:pointer;color:var(--mid-gray)">Đổi ảnh</button>
           </div>
         </div>
@@ -784,7 +1183,7 @@ function initUploadZone() {
     reader.readAsDataURL(file);
   }
 
-  window.resetUploadZone = function() {
+  window.resetUploadZone = function () {
     zone._file = null;
     zone.style.borderColor = "";
     zone.style.background = "";
@@ -793,17 +1192,21 @@ function initUploadZone() {
   };
 
   function reinitZoneEvents() {
-    const fi = zone.querySelector("input[type=file]") || (() => {
-      const inp = document.createElement("input");
-      inp.type = "file"; inp.accept = "image/*"; inp.style.display = "none";
-      zone.appendChild(inp);
-      return inp;
-    })();
-    fi.addEventListener("change", e => handleFile(e.target.files[0]));
+    const fi =
+      zone.querySelector("input[type=file]") ||
+      (() => {
+        const inp = document.createElement("input");
+        inp.type = "file";
+        inp.accept = "image/*";
+        inp.style.display = "none";
+        zone.appendChild(inp);
+        return inp;
+      })();
+    fi.addEventListener("change", (e) => handleFile(e.target.files[0]));
     zone.onclick = () => fi.click();
   }
 
-  zone.addEventListener("dragover", e => {
+  zone.addEventListener("dragover", (e) => {
     e.preventDefault();
     zone.style.borderColor = "var(--terracotta)";
     zone.style.background = "#FFF5F0";
@@ -812,14 +1215,14 @@ function initUploadZone() {
     zone.style.borderColor = "";
     zone.style.background = "";
   });
-  zone.addEventListener("drop", e => {
+  zone.addEventListener("drop", (e) => {
     e.preventDefault();
     handleFile(e.dataTransfer.files[0]);
   });
 
   zone.addEventListener("click", () => fileInput.click());
-  fileInput.addEventListener("change", e => handleFile(e.target.files[0]));
-  fileInput.addEventListener("click", e => e.stopPropagation());
+  fileInput.addEventListener("change", (e) => handleFile(e.target.files[0]));
+  fileInput.addEventListener("click", (e) => e.stopPropagation());
 }
 
 // ===== MODALS =====
@@ -834,8 +1237,8 @@ function closeModal(id) {
 }
 
 // Close modal on overlay click
-document.querySelectorAll(".modal-overlay").forEach(overlay => {
-  overlay.addEventListener("click", e => {
+document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+  overlay.addEventListener("click", (e) => {
     if (e.target === overlay) {
       overlay.classList.remove("open");
       document.body.style.overflow = "";
@@ -864,9 +1267,9 @@ function showToast(msg) {
 }
 
 // ===== KEYBOARD ESC =====
-document.addEventListener("keydown", e => {
+document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
-    document.querySelectorAll(".modal-overlay.open").forEach(m => {
+    document.querySelectorAll(".modal-overlay.open").forEach((m) => {
       m.classList.remove("open");
       document.body.style.overflow = "";
     });
@@ -881,7 +1284,9 @@ function initNavAuth() {
 
   let session = null;
   try {
-    const raw = localStorage.getItem("pawlink_session") || localStorage.getItem("pawgen_session");
+    const raw =
+      localStorage.getItem("pawlink_session") ||
+      localStorage.getItem("pawgen_session");
     session = raw ? JSON.parse(raw) : null;
   } catch {}
 
@@ -895,7 +1300,7 @@ function initNavAuth() {
     const isAdmin = session.role === "admin";
     navAuth.innerHTML = `
       <div class="nav-user-pill">
-        <div class="nav-avatar ${isAdmin ? 'admin-av' : ''}">${initial}</div>
+        <div class="nav-avatar ${isAdmin ? "admin-av" : ""}">${initial}</div>
         <span>${session.name.split(" ").slice(-1)[0]}</span>
         ${isAdmin ? '<span style="font-size:0.65rem;background:var(--forest);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;margin-left:2px">Admin</span>' : ""}
         <div class="nav-dropdown">
