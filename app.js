@@ -1177,72 +1177,91 @@ function initForms() {
   // Foster form
   document.getElementById("fosterForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    const form = e.target;
-    // Đọc dữ liệu từ form
-    const name = form.querySelector('[name="fosterName"], #fosterName, input[placeholder*="tên"], input[placeholder*="Tên"]')?.value?.trim()
-      || form.querySelectorAll("input")[0]?.value?.trim() || "";
-    const phone = form.querySelector('[name="fosterPhone"], #fosterPhone, input[type="tel"]')?.value?.trim()
-      || form.querySelectorAll("input")[1]?.value?.trim() || "";
-    const area = form.querySelector('[name="fosterArea"], #fosterArea, input[placeholder*="quận"], input[placeholder*="Địa"]')?.value?.trim()
-      || form.querySelectorAll("input")[2]?.value?.trim() || "";
-    const typeRaw = form.querySelector("select")?.value || "Mèo";
-    const type = typeRaw.includes("Chó") && typeRaw.includes("Mèo") ? "Chó + Mèo" : typeRaw.includes("Chó") ? "Chó" : "Mèo";
+    const name  = document.getElementById("fosterName")?.value?.trim() || "";
+    const phone = document.getElementById("fosterPhone")?.value?.trim() || "";
+    const area  = document.getElementById("fosterArea")?.value?.trim() || "";
+    const typeRaw = document.getElementById("fosterType")?.value || "Có thể nuôi: Mèo";
+    const typeLabel = typeRaw.includes("Cả hai") ? "Chó + Mèo"
+                    : typeRaw.includes("Chó") ? "Chó" : "Mèo";
 
-    if (name) {
-      // Lưu vào pawgen_fosters để Admin thấy
-      const FOSTERS_KEY = "pawgen_fosters";
-      let fosters = [];
-      try { fosters = JSON.parse(localStorage.getItem(FOSTERS_KEY) || "[]"); } catch {}
-      fosters.push({
-        id: Date.now(),
-        name, phone, area, type,
-        rating: 5, current: 0, max: 1,
-        avatar: "🐾",
-        joined: new Date().toLocaleDateString("vi-VN"),
-        status: "active",
-        source: "website"
-      });
-      localStorage.setItem(FOSTERS_KEY, JSON.stringify(fosters));
+    if (!name || !phone || !area) {
+      showToast("⚠️ Vui lòng điền đầy đủ họ tên, SĐT và địa chỉ!");
+      return;
     }
 
-    showToast(
-      "🏠 Đăng ký nuôi tạm thành công! Chúng mình sẽ liên hệ trong 24h.",
-    );
-    form.reset();
+    // Lưu vào pawgen_fosters để Admin thấy trong trang Quản lý
+    const FOSTERS_KEY = "pawgen_fosters";
+    let fosters = [];
+    try { fosters = JSON.parse(localStorage.getItem(FOSTERS_KEY) || "[]"); } catch {}
+    fosters.push({
+      id: Date.now(),
+      name, phone,
+      area,
+      type: typeLabel,
+      rating: 5,
+      current: 0,
+      max: 1,
+      avatar: "🐾",
+      joined: new Date().toLocaleDateString("vi-VN"),
+      status: "active",
+      source: "website"
+    });
+    localStorage.setItem(FOSTERS_KEY, JSON.stringify(fosters));
+
+    showToast("🏠 Đăng ký nuôi tạm thành công! Chúng mình sẽ liên hệ trong 24h.");
+    e.target.reset();
   });
 
   // Volunteer form
   document.getElementById("volunteerForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    const form = e.target;
-    const inputs = form.querySelectorAll("input, select, textarea");
-    const name = form.querySelector('input[id*="Name"], input[id*="name"], input[placeholder*="Tên"], input[placeholder*="tên"]')?.value?.trim()
-      || inputs[0]?.value?.trim() || "";
-    const phone = form.querySelector('input[type="tel"], input[id*="Phone"], input[id*="phone"]')?.value?.trim()
-      || inputs[1]?.value?.trim() || "";
-    const area = form.querySelector('input[id*="Area"], input[id*="area"], input[placeholder*="Quận"], input[placeholder*="quận"]')?.value?.trim() || "";
-    const role = form.querySelector('select')?.value || "Rescuer";
+    const name  = document.getElementById("volName")?.value?.trim() || "";
+    const email = document.getElementById("volEmail")?.value?.trim() || "";
+    const phone = document.getElementById("volPhone")?.value?.trim() || "";
+    const area  = document.getElementById("volArea")?.value?.trim() || "";
 
-    if (name) {
-      // Lưu vào pawgen_volunteers để Admin thấy
-      const VOLUNTEERS_KEY = "pawgen_volunteers";
-      let volunteers = [];
-      try { volunteers = JSON.parse(localStorage.getItem(VOLUNTEERS_KEY) || "[]"); } catch {}
-      volunteers.push({
-        id: Date.now(),
-        name, phone, area,
-        role: role,
-        status: "active",
-        missions: 0,
-        joined: new Date().toLocaleDateString("vi-VN"),
-        source: "website"
-      });
-      localStorage.setItem(VOLUNTEERS_KEY, JSON.stringify(volunteers));
+    // Thu thập thời gian có thể
+    const times = [];
+    if (document.getElementById("volTimeSang")?.checked)     times.push("Sáng");
+    if (document.getElementById("volTimeChieu")?.checked)    times.push("Chiều");
+    if (document.getElementById("volTimeToi")?.checked)      times.push("Tối");
+    if (document.getElementById("volTimeCuoiTuan")?.checked) times.push("Cuối tuần");
+
+    // Lấy vai trò từ tiêu đề modal
+    const roleText = document.getElementById("volunteerRole")?.textContent?.trim() || "Rescuer";
+    const roleMap = {
+      "rescuer": "Rescuer",
+      "foster": "Foster Parent",
+      "coordinator": "Coordinator",
+      "photographer": "Pet Photographer",
+    };
+    const role = roleMap[roleText.toLowerCase()] || roleText || "Rescuer";
+
+    if (!name || !phone) {
+      showToast("⚠️ Vui lòng điền họ tên và số điện thoại!");
+      return;
     }
+
+    // Lưu vào pawgen_volunteers để Admin thấy trong trang Quản lý
+    const VOLUNTEERS_KEY = "pawgen_volunteers";
+    let volunteers = [];
+    try { volunteers = JSON.parse(localStorage.getItem(VOLUNTEERS_KEY) || "[]"); } catch {}
+    volunteers.push({
+      id: Date.now(),
+      name, phone, email,
+      area: area || "Chưa rõ",
+      role,
+      availableTime: times.join(", "),
+      status: "active",
+      missions: 0,
+      joined: new Date().toLocaleDateString("vi-VN"),
+      source: "website"
+    });
+    localStorage.setItem(VOLUNTEERS_KEY, JSON.stringify(volunteers));
 
     closeModal("volunteerModal");
     showToast("✅ Đơn đăng ký tình nguyện đã được gửi! Cảm ơn bạn rất nhiều!");
-    form.reset();
+    e.target.reset();
   });
 }
 

@@ -269,10 +269,10 @@
       <form class="foster-signup" id="fosterForm">
         <h3>Đăng ký làm người nuôi tạm</h3>
         <div class="foster-form-row">
-          <input type="text" placeholder="Họ tên" required />
-          <input type="tel" placeholder="Số điện thoại" required />
-          <input type="text" placeholder="Địa chỉ / Quận" required />
-          <select>
+          <input type="text" id="fosterName" placeholder="Họ tên" required />
+          <input type="tel" id="fosterPhone" placeholder="Số điện thoại" required />
+          <input type="text" id="fosterArea" placeholder="Địa chỉ / Quận" required />
+          <select id="fosterType">
             <option>Có thể nuôi: Mèo</option>
             <option>Có thể nuôi: Chó</option>
             <option>Có thể nuôi: Cả hai</option>
@@ -537,16 +537,16 @@
       <button class="modal-close" onclick="closeModal('volunteerModal')">✕</button>
       <h3>Đăng ký tình nguyện: <span id="volunteerRole"></span></h3>
       <form id="volunteerForm">
-        <div class="form-group"><label>Họ tên *</label><input type="text" required/></div>
-        <div class="form-group"><label>Email *</label><input type="email" required/></div>
-        <div class="form-group"><label>Số điện thoại *</label><input type="tel" required/></div>
-        <div class="form-group"><label>Trường / Nơi làm việc</label><input type="text"/></div>
+        <div class="form-group"><label>Họ tên *</label><input type="text" id="volName" required/></div>
+        <div class="form-group"><label>Email *</label><input type="email" id="volEmail" required/></div>
+        <div class="form-group"><label>Số điện thoại *</label><input type="tel" id="volPhone" required/></div>
+        <div class="form-group"><label>Quận / Khu vực</label><input type="text" id="volArea"/></div>
         <div class="form-group"><label>Thời gian có thể</label>
           <div class="checkbox-group">
-            <label><input type="checkbox" /> Buổi sáng</label>
-            <label><input type="checkbox" /> Buổi chiều</label>
-            <label><input type="checkbox" /> Buổi tối</label>
-            <label><input type="checkbox" /> Cuối tuần</label>
+            <label><input type="checkbox" id="volTimeSang"/> Buổi sáng</label>
+            <label><input type="checkbox" id="volTimeChieu"/> Buổi chiều</label>
+            <label><input type="checkbox" id="volTimeToi"/> Buổi tối</label>
+            <label><input type="checkbox" id="volTimeCuoiTuan"/> Cuối tuần</label>
           </div>
         </div>
         <button type="submit" class="btn-primary w-full">Gửi đơn đăng ký</button>
