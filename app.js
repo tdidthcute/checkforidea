@@ -807,12 +807,20 @@ function initDonateAmounts() {
   const impactMap = {
     2000: "1 gói thức ăn nhỏ",
     5000: "Sữa cho mèo con 1 ngày",
+    10000: "Thức ăn 1 ngày cho 1 bé",
     20000: "Thức ăn 2 ngày",
     50000: "1 buổi khám thú y",
     100000: "1 liều vaccine cơ bản",
     200000: "Thức ăn cho 1 tuần nuôi tạm",
     500000: "1 ca phẫu thuật nhỏ",
   };
+
+  // Hiện impact text cho button active mặc định ngay khi load
+  const defaultActive = document.querySelector(".donate-amt.active");
+  if (defaultActive && impact) {
+    const defaultAmt = parseInt(defaultActive.dataset.amt);
+    impact.innerHTML = `✨ ${formatPrice(defaultAmt)} = ${impactMap[defaultAmt] || "Hỗ trợ cứu hộ"}`;
+  }
 
   btns.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -901,22 +909,17 @@ function openDonateQRModal(amt) {
   document.getElementById("dqrAmt").textContent = formatPrice(amt);
   document.getElementById("dqrMsg").textContent = content;
   const img = document.getElementById("dqrImg");
-  // Xóa error message cũ nếu có
-  const oldErr = img.parentElement.querySelector(".dqr-err");
-  if (oldErr) oldErr.remove();
   img.style.display = "none";
-  img.src = vietQRUrl;
+  imxg.src = "img/qr.jpg";
   img.onload = () => {
     img.style.display = "block";
   };
   img.onerror = () => {
     img.style.display = "none";
-    if (!img.parentElement.querySelector(".dqr-err")) {
-      img.insertAdjacentHTML(
-        "afterend",
-        `<div class="dqr-err" style="padding:1rem;color:var(--mid-gray);font-size:0.82rem">⚠️ Không tải được QR. Vui lòng chuyển khoản theo thông tin bên dưới.</div>`,
-      );
-    }
+    img.insertAdjacentHTML(
+      "afterend",
+      `<div style="padding:1rem;color:var(--mid-gray);font-size:0.82rem">⚠️ Không tải được QR. Vui lòng chuyển khoản theo thông tin bên dưới.</div>`,
+    );
   };
 
   // store for copy
