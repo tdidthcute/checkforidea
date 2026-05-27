@@ -1,142 +1,420 @@
 const PETS_DATA = [
   {
     id: 1,
-    name: "A Lem",
+    name: "Vàng",
     type: "cat",
     emoji: "🐱",
-    age: "~2 tháng",
-    location: "Khu A Trường Đại học Công nghê Kỹ Thuật",
+    age: "~1 năm",
+    location: "Khu A, Đại học Công Nghệ Kỹ Thuật TPHCM.",
     gender: "Cái",
-    status: "urgent",
+    status: "false",
     vaccinated: false,
     neutered: false,
     fosterDays: 3,
-    desc: "Mochi được phát hiện tại cổng trường trong tình trạng bị thương nhẹ ở chân. Hiện đã được sơ cứu và cần người nuôi tạm gấp. Rất thân thiện và không cắn.",
-    tags: ["Mèo con", "Cần gấp", "Đang điều trị"],
+    desc: "Hướng nội nên chỉ toàn chơi một mình, chủ yếu yêu thiên nhiên hòa mình vào cây cỏ. Tìm gia đình có không gian rộng và thiên nhiên.",
+    tags: ["Nhút nhát"],
     bgColor: "#FFF0E8",
     costs: "320,000 VNĐ",
+    image: "./img/vang.jpg.jpg"
   },
   {
     id: 2,
-    name: "Bông",
-    type: "dog",
-    emoji: "🐶",
+    name: "Mập",
+    type: "cat",
+    emoji: "🐱",
     age: "~6 tháng",
-    location: "Hẻm Nguyễn Trãi, Q.5",
-    gender: "Đực",
+    location: "Khu A và F, Đại học Công Nghệ Kỹ Thuật TPHCM.",
+    gender: "Cái",
     status: "safe",
     vaccinated: true,
     neutered: false,
     fosterDays: 14,
-    desc: "Bông là chú chó lai rất năng động và thân thiện. Đã được tiêm vaccine đầy đủ. Hòa đồng với trẻ em và mèo. Tìm gia đình có không gian rộng.",
-    tags: ["Chó con", "Đã vaccine", "Thân thiện"],
+    desc: "Cá thể mèo thượng đẳng, chỉ mới gia nhập trại mèo nhưng không ngán bất kỳ ai. Cô mèo say hi với loài người, hòa đồng với trẻ em và mèo. Tìm gia đình có không gian rộng.",
+    tags: ["Thân thiện", "Hơi choảnh"],
     bgColor: "#E8F0FF",
     costs: "750,000 VNĐ",
+    image: "./img/map.jpg.jpg"
   },
   {
     id: 3,
-    name: "Pudding",
+    name: "Bí",
     type: "cat",
     emoji: "🐱",
     age: "~1 năm",
-    location: "Ký túc xá ĐHQG, Thủ Đức",
+    location: "Green coffee khu F, Đại học Công Nghệ Kỹ Thuật TPHCM.",
     gender: "Cái",
-    status: "watch",
+    status: "safe",
     vaccinated: true,
     neutered: true,
     fosterDays: 7,
-    desc: "Pudding là một cô mèo trắng rất hiền lành. Đã triệt sản và tiêm đủ vaccine. Thích nằm và chơi đùa nhẹ nhàng. Phù hợp với người sống trong căn hộ nhỏ.",
-    tags: ["Đã vaccine", "Đã triệt sản", "Dễ nuôi"],
+    desc: "Bí là một cô mèo rất hiền lành. Quyến rũ những ai cầm đồ ăn sáng và chơi đùa nhẹ nhàng. Phù hợp với người sống trong căn hộ nhỏ.",
+    tags: ["Đã vaccine", "Siêu thân thiện", "Dễ nuôi"],
     bgColor: "#F0FFE8",
     costs: "1,100,000 VNĐ",
+    image: "./img/bi.jpg.jpg"
   },
   {
     id: 4,
-    name: "Caramel",
-    type: "dog",
-    emoji: "🐕",
+    name: "Tripod",
+    type: "cat",
+    emoji: "🐱",
     age: "~3 tháng",
-    location: "Công viên Tao Đàn, Q.1",
-    gender: "Cái",
+    location: "Khu A, Đại học Công Nghệ Kỹ Thuật TPHCM.",
+    gender: "Đực",
     status: "safe",
     vaccinated: false,
     neutered: false,
     fosterDays: 5,
-    desc: "Caramel được tìm thấy một mình tại công viên. Tình trạng sức khỏe tốt, chỉ cần người yêu thương và chăm sóc. Rất hiếu động và ham chơi.",
-    tags: ["Chó con", "Sức khỏe tốt", "Năng động"],
+    desc: "Tripod được nhìn thấy tại KTX Cao đằng xây dựng nhưng vì một số lí do nên không được ở đó nữa. Hiện tại bé được chuyển về UTE để có nơi nương tựa. Bẩm sinh chỉ có 3 chân. Tìm gia đình có thể yêu thương, chăm sóc và quan tâm bé hơn xíu. Rất hiếu động và ham chơi.",
+    tags: ["Siêu thân thiện", "Năng động"],
     bgColor: "#FFF8E0",
     costs: "150,000 VNĐ",
+    image: "./img/tripod.jpg.jpg"
   },
   {
     id: 5,
-    name: "Tàu Hũ",
+    name: "Kiều",
     type: "cat",
     emoji: "😺",
     age: "~4 tháng",
-    location: "Chợ Bến Thành, Q.1",
-    gender: "Đực",
+    location: "Khu E, Đại học Công Nghệ Kỹ Thuật TPHCM.",
+    gender: "Cái",
     status: "safe",
     vaccinated: true,
     neutered: false,
     fosterDays: 20,
-    desc: "Tàu Hũ (vì màu vàng nhạt như tàu hũ) là chú mèo vô cùng nghịch ngợm. Đã được tiêm vaccine mũi đầu. Cần nhà nuôi có kinh nghiệm với mèo.",
-    tags: ["Đã vaccine 1 mũi", "Nghịch ngợm", "Mèo đực"],
+    desc: "Kiều đẹp nghiêng nước nghiêng thành nên lúc ẩn lúc hiện. Đã được tiêm vaccine mũi đầu. Cần nhà nuôi có kinh nghiệm với mèo.",
+    tags: ["Đã vaccine 1 mũi", "Đẹp không chỗ chê", "Khá thân thiện"],
     bgColor: "#FFF0E8",
     costs: "450,000 VNĐ",
+    image: "./img/kieu.jpg.jpg"
   },
   {
     id: 6,
-    name: "Luna",
+    name: "Diễm",
     type: "cat",
     emoji: "🐈",
     age: "~8 tháng",
-    location: "ĐH Kinh tế TP.HCM",
+    location: " Xưởng in khu E, Đại học Công Nghệ Kỹ Thuật TPHCM.",
     gender: "Cái",
-    status: "urgent",
+    status: "safe",
     vaccinated: false,
     neutered: false,
     fosterDays: 1,
-    desc: "Luna mới được báo cáo hôm nay. Đang bị sốt và cần đưa đến phòng khám ngay. Cần người tình nguyện vận chuyển và nuôi tạm gấp.",
-    tags: ["Cần cứu gấp", "Đang ốm", "Khẩn cấp"],
+    desc: "Hay xin ăn, chảnh thì thôi nhé cho ăn nhiều thì được sờ nhiều không cho thì chỉ thái độ. Cần tìm gia đình yêu mèo.",
+    tags: ["Khá thân thiện", "Hay xin ăn"],
     bgColor: "#FFEAEA",
     costs: "0 VNĐ (mới)",
+    image: "./img/diem.jpg.jpg"
   },
   {
     id: 7,
-    name: "Đậu Phộng",
+    name: "Mun",
     type: "dog",
     emoji: "🐩",
-    age: "~2 năm",
-    location: "Bình Dương (gần HCM)",
-    gender: "Đực",
+    age: "~4 năm",
+    location: "Dĩ An, Bình Dương (gần HCM)",
+    gender: "Cái",
     status: "safe",
     vaccinated: true,
     neutered: true,
     fosterDays: 30,
-    desc: "Đậu Phộng là chú chó trưởng thành rất điềm tĩnh. Đã triệt sản và tiêm đủ vaccine. Không sủa nhiều, thích ngủ và ăn. Phù hợp với người bận rộn.",
+    desc: "Mun là chú chó trưởng thành rất điềm tĩnh. Đã triệt sản và tiêm đủ vaccine. Không sủa nhiều, thích ngủ và ăn. Phù hợp với người bận rộn.",
     tags: ["Đã vaccine", "Đã triệt sản", "Điềm tĩnh"],
     bgColor: "#E8FFF0",
     costs: "1,500,000 VNĐ",
+    image: "./img/mun.jpg.jpg"
   },
   {
     id: 8,
-    name: "Oreo",
-    type: "cat",
-    emoji: "🐱",
+    name: "Gấu",
+    type: "dog",
+    emoji: "🐩",
     age: "~6 tháng",
-    location: "ĐH Sư Phạm, Q.5",
+    location: "Lê Văn Việt, Tăng Nhơn Phú, TPHCM",
     gender: "Đực",
     status: "watch",
     vaccinated: true,
     neutered: false,
     fosterDays: 10,
-    desc: "Oreo có bộ lông đen trắng giống bánh Oreo. Tính cách vui vẻ, hay kêu meo meo. Đang chờ làm triệt sản. Người nhận nuôi cần ký cam kết triệt sản.",
+    desc: "Gâu có bộ lông đen trắng giống bánh Oreo. Tính cách vui vẻ, hay sủa gâu gâu. Bị gia đình bỏ rơi, hiện tại đã được gia đình khác cưu mang tạm thời nhưng vẫn cần tìm chỗ mới. Đang chờ làm triệt sản. Người nhận nuôi cần ký cam kết triệt sản.",
     tags: ["Đã vaccine", "Chờ triệt sản", "Vui vẻ"],
     bgColor: "#F5E8FF",
-    costs: "600,000 VNĐ",
+    costs: "1,500,000 VNĐ",
+    image: "./img/gau.jpg.jpg"
   },
+  {
+    id: 9,
+    name: "A Lem",
+    type: "cat",
+    emoji: "🐱",
+    age: "Lớn tuổi",
+    location: "Khu A (gần cafe Ông Bầu), ĐH Công Nghệ Kỹ Thuật TPHCM.",
+    gender: "Cái",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 0,
+    desc: "Cái màu lông độc nhất vô nhị, chỉ lớn tuổi lắm rồi, chỉ thường độc chiếm khu gần cafe Ông Bầu ấy, nhìn mặt chỉ giang hồ thế thoi chứ chỉ hiền khô hà =)))",
+    tags: ["Siêu thân thiện", "Giang hồ hiền lành"],
+    bgColor: "#FFF0E8",
+    costs: "0 VNĐ",
+    image: "./img/alem.jpg.jpg"
+  },
+  {
+    id: 10,
+    name: "A Nhem",
+    type: "cat",
+    emoji: "😼",
+    age: "~1 năm",
+    location: "Khu A, Đại học Công Nghệ Kỹ Thuật TPHCM.",
+    gender: "Cái",
+    status: "watch",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 0,
+    desc: "Tưởng Mỹ Lem của Vitamin mèo từ Cần Thơ lên UTE đi học :)) chỉ ăn nhiều gào siuu lớn đặc biệt là không cho sờ. Chúng tôi những con người cho chỉ ăn và bị chỉ tặng cho những vết cào nồng cháy.",
+    tags: ["Chảnh", "Không cho sờ"],
+    bgColor: "#FFEAEA",
+    costs: "0 VNĐ",
+    image: "./img/anhem.jpg.jpg"
+  },
+  {
+    id: 11,
+    name: "Ba Ghẻ",
+    type: "cat",
+    emoji: "🐯",
+    age: "~1 năm",
+    location: "Khu A, Đại học Công Nghệ Kỹ Thuật TPHCM.",
+    gender: "Đực",
+    status: "watch",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 5,
+    desc: "Là em song sinh với Hai Khờ, để nhận biết ảnh thì nhìn vào màu lông, lông ảnh đậm hơn với có sọc vằn, y như cọp. Chắc đồng chị đồng em, thương nhau nên bệnh da liễu như nhau :((",
+    tags: ["Siêu thân thiện", "Sọc cọp vằn"],
+    bgColor: "#FFF8E0",
+    costs: "0 VNĐ",
+    image: "./img/baghe.jpg.jpg"
+,  },
+  {
+    id: 12,
+    name: "Bí",
+    type: "cat",
+    emoji: "🐱",
+    age: "~1 năm",
+    location: "Green coffee khu F",
+    gender: "Bé gái",
+    status: "safe", 
+    vaccinated: false, 
+    neutered: false,
+    fosterDays: 14,
+    desc: "Bí là một cô mèo rất hiền lành. Quyến rũ những ai cầm đồ ăn sáng và chơi đùa nhẹ nhàng với mọi người. Tuy nhiên chỉ hay bị viêm da.",
+    tags: ["Thân thiện", "Hay bị viêm da"],
+    bgColor: "#F0FFE8", 
+    costs: "0 VNĐ",
+    image: "./img/bi.jpg.jpg"
+  },
+  {
+    id: 13,
+    name: "Cá",
+    type: "cat",
+    emoji: "🐱",
+    age: "~1 năm",
+    location: "Khu A, Đại học Công Nghệ Kỹ Thuật TPHCM.",
+    gender: "Bé gái",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Nuôi từ bé, thân thiện, không kén ăn. Do hay lang thang ngoài đường nên người hơi dơ.",
+    tags: ["Thân thiện", "Hơi dơ", "Đi bụi"],
+    bgColor: "#E8F0FF",
+    costs: "0 VNĐ",
+    image: "./img/ca.jpg.jpg"
+  },
+  {
+    id: 14,
+    name: "Hai Khờ",
+    type: "cat",
+    emoji: "🐱",
+    age: "~1 năm",
+    location: "Khu A",
+    gender: "Bé trai",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Là anh em sinh đôi với 3 ghẻ nhưng lông nhạt hơn với không có sọc vằn, tính lầm lầm lì lì, hơi quạo khi sờ, đang trị nấm rụng lông.",
+    tags: ["Quạo", "Lầm lì"],
+    bgColor: "#FFF8E0",
+    costs: "0 VNĐ",
+    image: "./img/haikho.jpg.jpg"
+  },
+  {
+    id: 15,
+    name: "Quạo",
+    type: "cat",
+    emoji: "😼",
+    age: "~1 năm",
+    location: "Căn tin khu A, D và F",
+    gender: "Bé gái",
+    status: "watch",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Khuôn mặt lúc nào cũng quạo, trùm ăn vụng, chuyên gia cắn trộm (nên cẩn thận), trùm giang hồ.",
+    tags: ["Quạo", "Giang hồ", "Hay cắn trộm"],
+    bgColor: "#FFEAEA",
+    costs: "0 VNĐ",
+    image: "./img/quao.jpg.jpg" 
+  },
+  {
+    id: 16,
+    name: "Bầu",
+    type: "cat",
+    emoji: "🐱",
+    age: "~1 năm",
+    location: "Khu F",
+    gender: "Bé gái",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Bé hay ở trong KTX CĐ Xây dựng thỉnh thoảng qua UTE dạo mát, đã có bầu và đang sinh con, tính tình hiện tại rất hiền.",
+    tags: ["Hiền lành", "Đang nuôi con"],
+    bgColor: "#FFF0E8",
+    costs: "0 VNĐ",
+    image: "./img/bau.jpg.jpg"
+  },
+  {
+    id: 17,
+    name: "Đốm",
+    type: "cat",
+    emoji: "🐱",
+    age: "~2 năm",
+    location: "Khu D và F",
+    gender: "Bé gái",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Đốm có bộ lông đen trắng nhìn mặt khá hài, bé béo ụt ịt, tính tình lầm lì nhưng ít quạo, không kén ăn.",
+    tags: ["Lầm lì", "Béo ụt ịt"],
+    bgColor: "#E8F0FF",
+    costs: "0 VNĐ",
+    image: "./img/dom.jpg.jpg"
+  },
+  {
+    id: 18,
+    name: "Koi",
+    type: "cat",
+    emoji: "🐱",
+    age: "~2 năm",
+    location: "Khu F (nhà vệ sinh nam)",
+    gender: "Bé trai",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Sở hữu bộ lông y hệt cá Koi nên thường được gọi là Koi, hay kêu réo vì đòi ăn, rất thích bế và sờ, không sợ người nhưng sợ chó.",
+    tags: ["Thích bế", "Sợ chó", "Hay kêu"],
+    bgColor: "#F0FFE8",
+    costs: "0 VNĐ",
+    image: "./img/koi.jpg.jpg"
+  },
+  {
+    id: 19,
+    name: "Mướp",
+    type: "cat",
+    emoji: "🐱",
+    age: "~2 năm",
+    location: "Khu F",
+    gender: "Bé trai",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14
+    ,
+    desc: "Chỉ lầm lầm lì lì, hơi quạo không cho bế, thân với chó.",
+    tags: ["Quạo", "Thân với chó"],
+    bgColor: "#FFF8E0",
+    costs: "0 VNĐ",
+    image: "./img/muop.jpg.jpg"
+  },
+  {
+    id: 20,
+    name: "Mỹ Diệu",
+    type: "cat",
+    emoji: "🐱",
+    age: "~2 năm",
+    location: "Khu F",
+    gender: "Bé gái",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Mỹ Diệu với cái tính nết không lẫn đi đâu được, tướng ngồi lủng tường y chang bản gốc, đã béo nhưng lúc nào cũng đòi ăn, hay quạo với mèo khác.",
+    tags: ["Hay quạo", "Đòi ăn", "Ngồi lủng tường"],
+    bgColor: "#FFF0E8",
+    costs: "0 VNĐ",
+    image: "./img/mydieu.jpg.jpg"
+  },
+  {
+    id: 21,
+    name: "Trắng",
+    type: "cat",
+    emoji: "🐱",
+    age: "~1 năm",
+    location: "Khu E",
+    gender: "Bé gái",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Là đứa con gái út trong gia đình có 4 anh chị em, tính tình rất nhút nhát và sợ người.",
+    tags: ["Nhút nhát", "Sợ người"],
+    bgColor: "#E8F0FF",
+    costs: "0 VNĐ",
+    image: "./img/trang.jpg.jpg"
+  },
+  {
+    id: 21,
+    name: "Út Cọp",
+    type: "cat",
+    emoji: "🐯",
+    age: "~6 tháng",
+    location: "Khu A, Đại học Công Nghệ Kỹ Thuật TPHCM.",
+    gender: "Đực",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Bé Út Cọp siêu cấp đáng yêu với bộ lông vằn như một chú hổ con. Tính cách năng động, thích chạy nhảy tinh nghịch và rất quấn quýt các bạn sinh viên.",
+    tags: ["Năng động", "Sọc cọp vằn", "Quấn người"],
+    bgColor: "#FFF8E0",
+    costs: "0 VNĐ",
+    image: "./img/utcop.jpg.jpg"
+  },
+  {
+    id: 22,
+    name: "Vịt",
+    type: "cat",
+    emoji: "🐱",
+    age: "~1 năm",
+    location: "Khu A, Đại học Công Nghệ Kỹ Thuật TPHCM.",
+    gender: "Cái",
+    status: "safe",
+    vaccinated: false,
+    neutered: false,
+    fosterDays: 14,
+    desc: "Tên Vịt nhưng lại là mèo! Bé có dáng đi lạch bạch vô cùng dễ thương, tính tình thân thiện, khoái đi theo chân mọi người để nịnh bợ xin ăn.",
+    tags: ["Dễ thương", "Thân thiện", "Hay bám đuôi"],
+    bgColor: "#FFF0E8",
+    costs: "0 VNĐ",
+    image: "./img/vit.jpg.jpg"
+  }
 ];
-
 const MERCH_DATA = [
   {
     id: 1,
@@ -535,8 +813,11 @@ function renderPets(filter) {
     .map(
       (p) => `
     <div class="pet-adopt-card" onclick="openPetModal(${p.id})">
-      <div class="pet-adopt-img" style="background:${p.bgColor}">
-        <span>${p.emoji}</span>
+      <div class="pet-adopt-img" style="background:${p.bgColor}; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            ${p.image ? 
+              `<img src="${p.image}" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">` 
+              : `<span>${p.emoji}</span>`
+            }
         <span class="tag tag-${p.status === "urgent" ? "urgent" : p.status === "watch" ? "watch" : "safe"}" style="position:absolute;top:12px;left:12px">
           ${p.status === "urgent" ? "🔴 Cần gấp" : p.status === "watch" ? "🟡 Theo dõi" : "🟢 An toàn"}
         </span>
@@ -583,7 +864,9 @@ function openPetModal(id) {
   document.getElementById("petModalContent").innerHTML = `
     <div class="pet-modal-grid">
       <div>
-        <div class="pet-modal-img" style="background:${pet.bgColor}">${pet.emoji}</div>
+       <div class="pet-modal-img" style="background:${pet.bgColor}; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+      ${pet.image ? '<img src="' + pet.image + '" style="width: 100%; height: 100%; object-fit: contain;">' : pet.emoji}
+        </div>
       </div>
       <div class="pet-modal-info">
         <div class="pet-modal-tags">
@@ -807,20 +1090,12 @@ function initDonateAmounts() {
   const impactMap = {
     2000: "1 gói thức ăn nhỏ",
     5000: "Sữa cho mèo con 1 ngày",
-    10000: "Thức ăn 1 ngày cho 1 bé",
     20000: "Thức ăn 2 ngày",
     50000: "1 buổi khám thú y",
     100000: "1 liều vaccine cơ bản",
     200000: "Thức ăn cho 1 tuần nuôi tạm",
     500000: "1 ca phẫu thuật nhỏ",
   };
-
-  // Hiện impact text cho button active mặc định ngay khi load
-  const defaultActive = document.querySelector(".donate-amt.active");
-  if (defaultActive && impact) {
-    const defaultAmt = parseInt(defaultActive.dataset.amt);
-    impact.innerHTML = `✨ ${formatPrice(defaultAmt)} = ${impactMap[defaultAmt] || "Hỗ trợ cứu hộ"}`;
-  }
 
   btns.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -1135,25 +1410,125 @@ function initForms() {
   // Rescue form
   document.getElementById("rescueForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    closeModal("rescueModal");
-    showToast(
-      "🚨 Báo cáo cứu hộ đã được gửi! Volunteer sẽ liên hệ bạn trong 15 phút.",
-    );
+
+    const location  = document.getElementById("rescueLocation")?.value?.trim() || "";
+    const phone     = document.getElementById("rescuePhone")?.value?.trim() || "";
+    const condition = document.getElementById("rescueCondition")?.value || "";
+    const desc      = document.getElementById("rescueDesc")?.value?.trim() || "";
+    const typeRadio = document.querySelector('input[name="rescueType"]:checked');
+    const type      = typeRadio ? typeRadio.value : "other";
+
+    if (!location || !phone) {
+      showToast("⚠️ Vui lòng điền vị trí và số điện thoại!");
+      return;
+    }
+    if (!condition) {
+      showToast("⚠️ Vui lòng chọn tình trạng của thú cưng!");
+      return;
+    }
+
+    // Lấy ảnh preview nếu người dùng đã upload
+    const zone = document.getElementById("uploadZone");
+    const previewImg = zone ? zone.querySelector("img") : null;
+    const photoData = previewImg ? previewImg.src : null;
+
+    const emojiMap = { cat: "🐱", dog: "🐶", other: "🐾" };
+    const condMap  = { urgent: "urgent", watch: "watch", safe: "safe", unknown: "watch" };
+
+    // Lưu vào pawlink_pending để Admin thấy
+    const PENDING_KEY = "pawlink_pending";
+    let pending = [];
+    try { pending = JSON.parse(localStorage.getItem(PENDING_KEY) || "[]"); } catch {}
+    pending.push({
+      id: "RPT-" + Date.now(),
+      submitTime: "Vừa xong",
+      reporter: "Người dùng",
+      phone, location,
+      name: "Chưa đặt tên",
+      type,
+      emoji: emojiMap[type] || "🐾",
+      age: "Không rõ",
+      gender: "Không rõ",
+      condition: condMap[condition] || "watch",
+      desc: desc || "Không có mô tả",
+      photo: photoData,
+      tags: ["Báo cáo mới"],
+      bgColor: "#FFF0E8",
+      vaccinated: false,
+      neutered: false,
+      status: "pending",
+      fosterDays: 0,
+      costs: "0 VNĐ",
+      time: new Date().toISOString()
+    });
+    localStorage.setItem(PENDING_KEY, JSON.stringify(pending));
+
+    showToast("🚨 Báo cáo đã gửi! Volunteer sẽ liên hệ bạn trong 15 phút.");
     e.target.reset();
+    if (window.resetUploadZone) window.resetUploadZone();
   });
 
   // Foster form
   document.getElementById("fosterForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    showToast(
-      "🏠 Đăng ký nuôi tạm thành công! Chúng mình sẽ liên hệ trong 24h.",
-    );
+    const name  = document.getElementById("fosterName")?.value?.trim() || "";
+    const phone = document.getElementById("fosterPhone")?.value?.trim() || "";
+    const area  = document.getElementById("fosterArea")?.value?.trim() || "";
+    const typeRaw = document.getElementById("fosterType")?.value || "";
+    const typeLabel = typeRaw.includes("Cả hai") ? "Chó + Mèo"
+                    : typeRaw.includes("Chó") ? "Chó" : "Mèo";
+
+    if (!name || !phone || !area) {
+      showToast("⚠️ Vui lòng điền đầy đủ họ tên, SĐT và địa chỉ!");
+      return;
+    }
+
+    let fosters = [];
+    try { fosters = JSON.parse(localStorage.getItem("pawgen_fosters") || "[]"); } catch {}
+    fosters.push({
+      id: Date.now(), name, phone, area, type: typeLabel,
+      rating: 5, current: 0, max: 1, avatar: "🐾",
+      joined: new Date().toLocaleDateString("vi-VN"),
+      status: "active", source: "website"
+    });
+    localStorage.setItem("pawgen_fosters", JSON.stringify(fosters));
+
+    showToast("🏠 Đăng ký nuôi tạm thành công! Chúng mình sẽ liên hệ trong 24h.");
     e.target.reset();
   });
 
   // Volunteer form
   document.getElementById("volunteerForm").addEventListener("submit", (e) => {
     e.preventDefault();
+    const name  = document.getElementById("volName")?.value?.trim() || "";
+    const email = document.getElementById("volEmail")?.value?.trim() || "";
+    const phone = document.getElementById("volPhone")?.value?.trim() || "";
+    const area  = document.getElementById("volArea")?.value?.trim() || "";
+    const role  = document.getElementById("volunteerRole")?.textContent?.trim() || "Rescuer";
+
+    const times = [];
+    if (document.getElementById("volTimeSang")?.checked)     times.push("Sáng");
+    if (document.getElementById("volTimeChieu")?.checked)    times.push("Chiều");
+    if (document.getElementById("volTimeToi")?.checked)      times.push("Tối");
+    if (document.getElementById("volTimeCuoiTuan")?.checked) times.push("Cuối tuần");
+
+    if (!name || !phone) {
+      showToast("⚠️ Vui lòng điền họ tên và số điện thoại!");
+      return;
+    }
+
+    let volunteers = [];
+    try { volunteers = JSON.parse(localStorage.getItem("pawgen_volunteers") || "[]"); } catch {}
+    volunteers.push({
+      id: Date.now(), name, phone, email,
+      area: area || "Chưa rõ", role,
+      availableTime: times.join(", "),
+      status: "active", missions: 0,
+      joined: new Date().toLocaleDateString("vi-VN"),
+      source: "website"
+    });
+    localStorage.setItem("pawgen_volunteers", JSON.stringify(volunteers));
+
     closeModal("volunteerModal");
     showToast("✅ Đơn đăng ký tình nguyện đã được gửi! Cảm ơn bạn rất nhiều!");
     e.target.reset();
