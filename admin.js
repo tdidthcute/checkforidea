@@ -323,7 +323,11 @@ function viewPet(id, source) {
       ${pet.rejectReason?`<div class="modal-info-item" style="grid-column:1/-1;border-left:3px solid var(--red)"><div class="modal-info-label">Lý do từ chối</div><div class="modal-info-val" style="color:var(--red)">${pet.rejectReason}</div></div>`:""}
     </div>
     <p class="modal-desc">${pet.desc}</p>
-    ${pet.photo ? `<div style="margin-bottom:1rem"><div style="font-size:0.75rem;color:var(--mid-gray);margin-bottom:0.4rem">📷 Ảnh báo cáo</div><img src="${pet.photo}" alt="Ảnh báo cáo" style="max-width:100%;max-height:280px;border-radius:8px;object-fit:cover;border:1px solid var(--light-gray)"/></div>` : ""}
+    ${pet.photo ? `
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:0.75rem;font-weight:700;color:var(--mid-gray);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em">📷 Ảnh báo cáo</div>
+      <img src="${pet.photo}" alt="Ảnh báo cáo" style="width:100%;max-height:320px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--light-gray);display:block;"/>
+    </div>` : ""}
     <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1.25rem">${(pet.tags||[]).map(t=>`<span class="tag-chip">${t}</span>`).join("")}</div>
     ${pet.status==="pending"?`<div class="modal-actions">
       <button class="btn-approve" onclick="approvePet('${pet.id}')">✅ Duyệt ngay</button>
