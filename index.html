@@ -195,29 +195,29 @@
         <form class="rescue-form" id="rescueForm">
           <div class="form-group">
             <label>Vị trí phát hiện *</label>
-            <input type="text" placeholder="VD: Cổng trường ĐH Bách Khoa, Q.10" required />
+            <input type="text" id="rescueLocation" placeholder="VD: Cổng trường ĐH Bách Khoa, Q.10" required />
           </div>
           <div class="form-group">
             <label>Loại động vật *</label>
             <div class="radio-group">
-              <label class="radio-label"><input type="radio" name="type" value="cat" /> 🐱 Mèo</label>
-              <label class="radio-label"><input type="radio" name="type" value="dog" /> 🐶 Chó</label>
-              <label class="radio-label"><input type="radio" name="type" value="other" /> 🐾 Khác</label>
+              <label class="radio-label"><input type="radio" name="rescueType" value="cat" /> 🐱 Mèo</label>
+              <label class="radio-label"><input type="radio" name="rescueType" value="dog" /> 🐶 Chó</label>
+              <label class="radio-label"><input type="radio" name="rescueType" value="other" /> 🐾 Khác</label>
             </div>
           </div>
           <div class="form-group">
             <label>Tình trạng *</label>
-            <select required>
+            <select id="rescueCondition" required>
               <option value="">Chọn tình trạng...</option>
-              <option>🔴 Bị thương nặng, cần cứu ngay</option>
-              <option>🟡 Có vẻ ốm, cần theo dõi</option>
-              <option>🟢 Khỏe mạnh nhưng bị bỏ rơi</option>
-              <option>⚪ Không chắc chắn</option>
+              <option value="urgent">🔴 Bị thương nặng, cần cứu ngay</option>
+              <option value="watch">🟡 Có vẻ ốm, cần theo dõi</option>
+              <option value="safe">🟢 Khỏe mạnh nhưng bị bỏ rơi</option>
+              <option value="unknown">⚪ Không chắc chắn</option>
             </select>
           </div>
           <div class="form-group">
             <label>Mô tả thêm</label>
-            <textarea placeholder="Màu lông, kích thước, hành vi... mọi thông tin đều hữu ích!" rows="3"></textarea>
+            <textarea id="rescueDesc" placeholder="Màu lông, kích thước, hành vi... mọi thông tin đều hữu ích!" rows="3"></textarea>
           </div>
           <div class="form-group">
             <label>Ảnh chụp (nếu có)</label>
@@ -228,7 +228,7 @@
           </div>
           <div class="form-group">
             <label>Số điện thoại liên hệ *</label>
-            <input type="tel" placeholder="0xxx xxx xxx" required />
+            <input type="tel" id="rescuePhone" placeholder="0xxx xxx xxx" required />
           </div>
           <button type="submit" class="btn-primary w-full">🚨 Gửi báo cáo cứu hộ</button>
         </form>

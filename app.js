@@ -1136,42 +1136,69 @@ function initForms() {
   // Rescue form
   document.getElementById("rescueForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    const form = e.target;
-    // Thu thập thông tin từ form
-    const name = form.querySelector('[id*="petName"], [name*="petName"]')?.value?.trim()
-      || form.querySelectorAll("input")[0]?.value?.trim() || "Chưa đặt tên";
-    const location = form.querySelector('[id*="location"], [id*="Location"]')?.value?.trim()
-      || form.querySelectorAll("input")[1]?.value?.trim() || "Không rõ";
-    const reporter = form.querySelector('[id*="reporter"], [id*="Reporter"], [id*="name"]:not([id*="pet"])')?.value?.trim()
-      || form.querySelectorAll("input")[2]?.value?.trim() || "Khách";
-    const phone = form.querySelector('[type="tel"], [id*="phone"], [id*="Phone"]')?.value?.trim() || "Không rõ";
-    const desc = form.querySelector('textarea')?.value?.trim() || "";
-    const condition = form.querySelector('select')?.value || "watch";
-    const type = desc.toLowerCase().includes("chó") ? "dog" : "cat";
 
-    // Lưu vào pawlink_pending để admin duyệt
+    const location  = document.getElementById("rescueLocation")?.value?.trim() || "";
+    const phone     = document.getElementById("rescuePhone")?.value?.trim() || "";
+    const condition = document.getElementById("rescueCondition")?.value || "unknown";
+    const desc      = document.getElementById("rescueDesc")?.value?.trim() || "";
+    const typeRadio = document.querySelector('input[name="rescueType"]:checked');
+    const type      = typeRadio ? typeRadio.value : "other";
+
+    if (!location || !phone) {
+      showToast("⚠️ Vui lòng điền vị trí và số điện thoại!");
+      return;
+    }
+    if (!condition) {
+      showToast("⚠️ Vui lòng chọn tình trạng của thú cưng!");
+      return;
+    }
+
+    // Lấy ảnh preview nếu có upload
+    const zone = document.getElementById("uploadZone");
+    const photoData = zone?._file ? (() => {
+      // Đọc base64 từ img preview trong zone
+      const img = zone.querySelector("img");
+      return img ? img.src : null;
+    })() : null;
+
+    const emojiMap = { cat: "🐱", dog: "🐶", other: "🐾" };
+    const conditionMap = {
+      urgent: "urgent", watch: "watch", safe: "safe", unknown: "watch"
+    };
+
+    // Lưu vào pawlink_pending để Admin thấy trong "Duyệt báo cáo"
     const PENDING_KEY = "pawlink_pending";
     let pending = [];
-    try { pending = JSON.parse(localStorage.getItem(PENDING_KEY) || "null") || []; } catch { pending = []; }
+    try { pending = JSON.parse(localStorage.getItem(PENDING_KEY) || "[]"); } catch {}
     pending.push({
       id: `RPT-${Date.now()}`,
       submitTime: "Vừa xong",
-      reporter, phone, name, type,
-      emoji: type === "dog" ? "🐶" : "🐱",
-      age: "Không rõ", gender: "Không rõ", location,
-      condition: condition === "urgent" ? "urgent" : condition === "watch" ? "watch" : "safe",
-      desc, tags: ["Báo cáo mới"],
+      reporter: "Người dùng",
+      phone,
+      name: "Chưa đặt tên",
+      type,
+      emoji: emojiMap[type] || "🐾",
+      age: "Không rõ",
+      gender: "Không rõ",
+      location,
+      condition: conditionMap[condition] || "watch",
+      desc: desc || "Không có mô tả",
+      photo: photoData,
+      tags: ["Báo cáo mới"],
       bgColor: "#FFF0E8",
-      vaccinated: false, neutered: false,
-      status: "pending", fosterDays: 0, costs: "0 VNĐ"
+      vaccinated: false,
+      neutered: false,
+      status: "pending",
+      fosterDays: 0,
+      costs: "0 VNĐ",
+      time: new Date().toISOString()
     });
     localStorage.setItem(PENDING_KEY, JSON.stringify(pending));
 
-    closeModal("rescueModal");
-    showToast(
-      "🚨 Báo cáo cứu hộ đã được gửi! Volunteer sẽ liên hệ bạn trong 15 phút.",
-    );
-    form.reset();
+    showToast("🚨 Báo cáo cứu hộ đã được gửi! Volunteer sẽ liên hệ bạn trong 15 phút.");
+    e.target.reset();
+    // Reset upload zone
+    if (window.resetUploadZone) window.resetUploadZone();
   });
 
   // Foster form
