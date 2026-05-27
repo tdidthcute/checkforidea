@@ -902,15 +902,15 @@ function openDonateQRModal(amt) {
   document.getElementById("dqrMsg").textContent = content;
   const img = document.getElementById("dqrImg");
   img.style.display = "none";
-  img.src = img / qr.jpg;
-  img.onload = () => {
-    img.style.display = "block";
-  };
+  // Xoá thông báo lỗi cũ nếu có
+  const oldErr = img.nextElementSibling;
+  if (oldErr && oldErr.tagName === "DIV") oldErr.remove();
+  img.src = vietQRUrl;
+  img.onload = () => { img.style.display = "block"; };
   img.onerror = () => {
     img.style.display = "none";
-    img.insertAdjacentHTML(
-      "afterend",
-      `<div style="padding:1rem;color:var(--mid-gray);font-size:0.82rem">⚠️ Không tải được QR. Vui lòng chuyển khoản theo thông tin bên dưới.</div>`,
+    img.insertAdjacentHTML("afterend",
+      `<div style="padding:1rem;color:var(--mid-gray);font-size:0.82rem">⚠️ Không tải được QR. Vui lòng chuyển khoản theo thông tin bên dưới.</div>`
     );
   };
 
