@@ -330,17 +330,29 @@
         return;
       }
       
+      const newId = Date.now();
+      const typeCode = type.includes("Cả hai") ? "both" : type.includes("Mèo") ? "cat" : "dog";
+      const typeLabel = typeCode === "both" ? "Chó + Mèo" : typeCode === "cat" ? "Mèo" : "Chó";
+
+      // Lưu vào danh sách request riêng
       const requests = JSON.parse(localStorage.getItem(FOSTER_REQUESTS_KEY) || "[]");
       requests.push({
-        id: Date.now(),
-        name, phone, address,
-        type: type.includes("Cả hai") ? "both" : type.includes("Mèo") ? "cat" : "dog",
-        maxCapacity,
-        experience,
-        status: "pending",
-        time: new Date().toISOString()
+        id: newId, name, phone, address, type: typeCode,
+        maxCapacity, experience, status: "pending", time: new Date().toISOString()
       });
       localStorage.setItem(FOSTER_REQUESTS_KEY, JSON.stringify(requests));
+
+      // ĐỒNG THỜI lưu vào pawgen_fosters để Admin thấy ngay
+      const FOSTERS_KEY = "pawgen_fosters";
+      let fosters = [];
+      try { fosters = JSON.parse(localStorage.getItem(FOSTERS_KEY) || "[]"); } catch {}
+      fosters.push({
+        id: newId, name, phone, area: address, type: typeLabel,
+        rating: 5, current: 0, max: maxCapacity,
+        avatar: "🐾", joined: new Date().toLocaleDateString("vi-VN"),
+        status: "active", source: "foster-matching"
+      });
+      localStorage.setItem(FOSTERS_KEY, JSON.stringify(fosters));
       
       showToast("✅ Đăng ký thành công! Admin sẽ duyệt và liên hệ bạn trong 24h.");
       fosterForm.reset();
