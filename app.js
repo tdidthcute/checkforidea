@@ -942,7 +942,10 @@ function renderMerch(filter) {
         <div class="merch-sub">${m.desc}</div>
         <div class="merch-footer">
           <span class="merch-price">${formatPrice(m.price)}</span>
-          <button class="btn-add-cart" onclick="addToCart(${m.id})">🛒 Thêm</button>
+          <div style="display:flex;gap:0.4rem">
+            <button class="btn-add-cart" onclick="addToCart(${m.id})">🛒 Thêm</button>
+            <button class="btn-add-cart" style="background:var(--forest);color:#fff;border:none" onclick="buyNow(${m.id})">Mua ngay</button>
+          </div>
         </div>
       </div>
     </div>
@@ -982,6 +985,18 @@ function addToCart(id) {
 
   updateCartFloat();
   showToast(`🛒 Đã thêm "${item.name}" vào giỏ!`);
+}
+
+function buyNow(id) {
+  let allMerch = MERCH_DATA;
+  try {
+    const adminMerch = JSON.parse(localStorage.getItem("pawgen_merch") || "null");
+    if (adminMerch && adminMerch.length > 0) allMerch = adminMerch;
+  } catch (e) {}
+  const item = allMerch.find((m) => Number(m.id) === Number(id));
+  if (!item) return;
+  localStorage.setItem("pawgen_cart", JSON.stringify([{ id: item.id, qty: 1 }]));
+  window.location.href = "checkout.html";
 }
 
 function updateCartFloat() {
@@ -1054,10 +1069,15 @@ function changeQty(id, delta) {
 }
 
 function checkout() {
-  cart = [];
-  updateCartFloat();
-  closeModal("cartModal");
-  showToast("🎉 Đặt hàng thành công! Cảm ơn bạn đã ủng hộ PAWGEN!");
+  if (cart.length === 0) {
+    showToast("🛒 Giỏ hàng đang trống!");
+    return;
+  }
+  // Lưu giỏ hàng vào localStorage để checkout.html đọc
+  const cartData = cart.map(item => ({ id: item.id, qty: item.qty }));
+  localStorage.setItem("pawgen_cart", JSON.stringify(cartData));
+  // Chuyển sang trang thanh toán
+  window.location.href = "checkout.html";
 }
 
 function formatPrice(n) {
