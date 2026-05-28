@@ -647,16 +647,17 @@
     const merch = getMerch();
     const container = document.getElementById("orderItems");
 
-    // Nếu giỏ rỗng, tạo demo item
+    // Nếu giỏ rỗng, về trang chủ
     if (!cart.length) {
-      cart = [{ id: 1, qty: 1 }, { id: 4, qty: 2 }];
+      document.getElementById("orderItems").innerHTML = `<div style="text-align:center;padding:2rem;color:var(--mgray)">🛒 Giỏ hàng trống!<br/><a href="index.html" style="color:var(--terra)">← Quay về mua hàng</a></div>`;
+      return;
     }
 
     let subtotal = 0;
     let html = "";
 
     cart.forEach(ci => {
-      const item = merch.find(m => m.id === ci.id) || SEED_MERCH.find(m => m.id === ci.id);
+      const item = merch.find(m => Number(m.id) === Number(ci.id)) || SEED_MERCH.find(m => Number(m.id) === Number(ci.id));
       if (!item) return;
       const lineTotal = item.price * ci.qty;
       subtotal += lineTotal;
@@ -722,7 +723,7 @@
       const merch = getMerch();
       let subtotal = 0;
       cart.forEach(ci => {
-        const item = merch.find(m => m.id === ci.id) || SEED_MERCH.find(m => m.id === ci.id);
+        const item = merch.find(m => Number(m.id) === Number(ci.id)) || SEED_MERCH.find(m => Number(m.id) === Number(ci.id));
         if (item) subtotal += item.price * ci.qty;
       });
       updateTotals(subtotal);
@@ -763,7 +764,7 @@
     const merch = getMerch();
     let subtotal = 0;
     cart.forEach(ci => {
-      const item = merch.find(m => m.id === ci.id) || SEED_MERCH.find(m => m.id === ci.id);
+      const item = merch.find(m => Number(m.id) === Number(ci.id)) || SEED_MERCH.find(m => Number(m.id) === Number(ci.id));
       if (item) subtotal += item.price * ci.qty;
     });
     const discountAmt = Math.round(subtotal * discount / 100);
